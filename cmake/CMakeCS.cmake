@@ -42,10 +42,13 @@ list(APPEND cmakecs_cmake_files
             common_cmake_options
             small_macros_and_functions
             parse_arguments_helpers
+            error_if_project_locked
+            error_if_project_not_init
             project
             project_properties
             init_project
             finalize_project
+            
             library
             test
             create_config_version_files
