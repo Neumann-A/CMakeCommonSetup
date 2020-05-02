@@ -2,6 +2,8 @@
 # for internal builds. 
 
 function(cmcs_finalize_project)
+    cmcs_error_if_project_locked()
+    cmcs_error_if_project_not_init()
     message(NOTICE "Finializing project: ${PROJECT_NAME}")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
