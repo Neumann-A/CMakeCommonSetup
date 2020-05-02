@@ -1,3 +1,6 @@
+# Function which targets of the project which should be exported and alias the targets 
+# for internal builds. 
+
 function(cmcs_finalize_project)
     message(NOTICE "Finializing project: ${PROJECT_NAME}")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
