@@ -1,0 +1,6 @@
+function(cmcs_error_if_project_locked)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_LOCKED)
+    if(${PROJECT_NAME}_LOCKED)
+        cmcs_error_message("${PROJECT_NAME} is already locked and cannot be modified any longer!")
+    endif()
+endfunction()

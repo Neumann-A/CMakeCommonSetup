@@ -1,0 +1,6 @@
+function(cmcs_error_if_project_not_init)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    if(NOT ${PROJECT_NAME}_PACKAGE_NAME)
+        cmcs_error_message("${PROJECT_NAME} not correctly setup! Missing call to cmcs_init_project!")
+    endif()
+endfunction()
