@@ -8,8 +8,11 @@ function(cmcs_define_project_properties) # Defines general project properties
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "" "PROJECT_NAME" "")
     cmcs_variable_exists_or_error(PREFIX ${_VAR_PREFIX} VARIABLES "PROJECT_NAME")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_PACKAGE_NAME 
-                                BRIEF_DOCS "Projects find_package name and namespace"
-                                FULL_DOCS  "Stores the package name to use for find_package calls and defines the namespace and file names for exported targets.")
+                                BRIEF_DOCS "Projects find_package name (inherited from parent)"
+                                FULL_DOCS  "Stores the package name to use for find_package calls ")
+    cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_NAMESPACE
+                                BRIEF_DOCS "Namespace of exported targets (inherited from parent)"
+                                FULL_DOCS  " ")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_REQUIRED_PACKAGES 
                                 BRIEF_DOCS "Stores the list of required package dependencies." FULL_DOCS " ")                            
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_OPTIONAL_PACKAGES 

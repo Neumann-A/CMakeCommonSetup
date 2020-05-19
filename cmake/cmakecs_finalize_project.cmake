@@ -4,8 +4,21 @@
 function(cmcs_finalize_project)
     cmcs_error_if_project_locked()
     cmcs_error_if_project_not_init()
+    #cmcs_create_function_variable_prefix(_VAR_PREFIX)
+    #cmake_parse_arguments("${_VAR_PREFIX}" "FINALIZE_CHILDS" "PROJECT_NAME" "" ${ARGN})
     message(NOTICE "Finializing project: ${PROJECT_NAME}")
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_CHILDS)
+    if(${PROJECT_NAME}_CHILDS)
+        foreach(_child IN LISTS ${${PROJECT_NAME}_CHILDS})
+            cmcs_get_global_property(PROPERTY ${_child}_LOCKED)
+            if(NOT ${_child}_LOCKED)
+                cmcs_error_message("Cannot finalize project ${PROJECT_NAME} since child project ${_child} has not beend finalized!")
+            endif()
+        endforeach()
+    endif()
+
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_NAMESPACE)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORTED_TARGETS)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
@@ -29,13 +42,13 @@ function(cmcs_finalize_project)
     #          requires the config to work form the build dir**
     if(${PROJECT_NAME}_EXPORT_ON_BUILD)
         export(EXPORT ${${PROJECT_NAME}_EXPORT_NAME}
-            NAMESPACE ${${PROJECT_NAME}_PACKAGE_NAME}:: 
+            NAMESPACE ${${PROJECT_NAME}_NAMESPACE}:: 
             FILE ${CMAKE_INSTALL_DATAROOTDIR}/${${PROJECT_NAME}_PACKAGE_NAME}/${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake)
     endif()
 
     # This only exists @ install time
     install(EXPORT ${${PROJECT_NAME}_EXPORT_NAME}
-            NAMESPACE ${${PROJECT_NAME}_PACKAGE_NAME}:: 
+            NAMESPACE ${${PROJECT_NAME}_NAMESPACE}:: 
             FILE ${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake 
             DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${${PROJECT_NAME}_PACKAGE_NAME}")
     set(${PROJECT_NAME}_LOCKED TRUE)
@@ -44,7 +57,7 @@ function(cmcs_finalize_project)
     # just as the target file would do. Assumes that all variables are available just 
     # like if find_package is called.
     foreach(_target IN LISTS ${PROJECT_NAME}_EXPORTED_TARGETS)
-        add_library(${${PROJECT_NAME}_PACKAGE_NAME}::${_target} ALIAS ${_target})
+        add_library(${${PROJECT_NAME}_NAMESPACE}::${_target} ALIAS ${_target})
     endforeach()
     # Disable find_package for internally available packages. 
     set(CMAKE_DISABLE_FIND_PACKAGE_${${PROJECT_NAME}_PACKAGE_NAME} TRUE CACHE INTERNAL "" FORCE)
