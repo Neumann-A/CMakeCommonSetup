@@ -17,6 +17,7 @@ include(CMakePrintSystemInformation)
 #include(InstallRequiredSystemLibraries) https://cmake.org/cmake/help/latest/module/InstallRequiredSystemLibraries.html
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY REPORT_UNDEFINED_PROPERTIES "${CMAKE_BINARY_DIR}/undef_properties.log")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   message(STATUS "CMAKE_INSTALL_PREFIX was not set. Setting default to ${CMAKE_SOURCE_DIR}/install")
@@ -48,12 +49,16 @@ list(APPEND cmakecs_cmake_files
             project_properties
             init_project
             finalize_project
-            
             library
             test
-            create_config_version_files
+            create_config_files
             add_package_dependency_to_target
 )
 foreach(_file IN LISTS cmakecs_cmake_files)
     include("${CMAKE_CURRENT_LIST_DIR}/cmakecs_${_file}.cmake")
 endforeach()
+
+set(CMakeCS_IF_KEYWORD_REGEX_LOGICAL "^(NOT|AND|OR)$" CACHE INTERNAL "Regex containing all possible logical cmake keywords for if()")
+set(CMakeCS_IF_KEYWORD_REGEX_CMAKE "^(COMMAND|POLICY|TARGET|TEST|IN_LIST|DEFINED)$" CACHE INTERNAL "Regex containing all possible cmake based keywords for if()")
+set(CMakeCS_IF_KEYWORD_REGEX_FILESYSTEM "^(EXISTS|IS_NEWER_THAN|IS_DIRECTORY|IS_SYMLINK|IS_ABSOLUTE)$" CACHE INTERNAL "Regex containing all possible filesystem cmake keywords for if()")
+set(CMakeCS_IF_KEYWORD_REGEX_COMPARE "^(MATCHES|LESS|GREATER|EQUAL|LESS_EQUAL|GREATER_EQUAL|STRLESS|STRGREATER|STREQUAL|STRLESS_EQUAL|STRGREATER_EQUAL|VERSION_LESS|VERSION_GREATER|VERSION_EQUAL|VERSION_LESS_EQUAL|VERSION_GREATER_EQUAL)$" CACHE INTERNAL "Regex containing all possible cmake compare keywords for if()")
