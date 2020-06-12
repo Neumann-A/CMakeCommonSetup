@@ -12,3 +12,6 @@ if(TARGET CMakeCS::General_TestTarget)
 else()
   message(SEND_ERROR "TARGET CMakeCS::General_TestTarget DOES NOT EXISTS")
 endif()
+
+add_executable(DepCheckDummy ${CMAKE_CURRENT_LIST_DIR}/dummy.cpp)
+target_link_libraries(DepCheckDummy PRIVATE CMakeCS::General_TestTarget)

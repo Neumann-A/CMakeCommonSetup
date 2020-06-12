@@ -21,7 +21,10 @@ function(cmcs_init_project)
     include(CPack) # https://cmake.org/cmake/help/latest/module/CPack.html
     cmcs_create_function_variable_prefix(_FUNC_PREFIX)
     set(_VAR_PREFIX ${_FUNC_PREFIX}_${PROJECT_NAME})
-    cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "" "PACKAGE_NAME;NAMESPACE;EXPORT_NAME;VERSION;VERSION_COMPATIBILITY;CONFIG_INSTALL_DESTINATION" "REQUIRED_PACKAGES;OPTIONAL_PACKAGES;OPTIONAL_CONDITIONAL_PACKAGES")
+    cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" 
+                                       "NO_FINALIZE;NO_AUTOMATIC_CONFIG_FILE" 
+                                       "PACKAGE_NAME;NAMESPACE;EXPORT_NAME;VERSION;VERSION_COMPATIBILITY;CONFIG_INPUT_FILE;CONFIG_INSTALL_DESTINATION;OPTION_FILE" 
+                                       "REQUIRED_PACKAGES;OPTIONAL_PACKAGES;OPTIONAL_CONDITIONAL_PACKAGES;PUBLIC_CMAKE_FILES;PUBLIC_CMAKE_DIRS;SUBDIRECTORIES;TARGET_FILES")
 
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
     if(${PROJECT_NAME}_PARENT)
@@ -34,17 +37,22 @@ function(cmcs_init_project)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT ${${${PROJECT_NAME}_PARENT}_VERSION_COMPATIBILITY})
     else()
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${PROJECT_NAME})
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${PROJECT_NAME})
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT "0.1")
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT "AnyNewerVersion")
     endif()
     
+    if(${_VAR_PREFIX}_OPTION_FILE)
+        include("${${_VAR_PREFIX}_OPTION_FILE}")
+    endif()
+
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_EXPORT_NAME DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
     
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
 
     cmcs_define_project_properties(PROJECT_NAME ${PROJECT_NAME})
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_NAMESPACE)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_REQUIRED_PACKAGES)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONAL_PACKAGES)
@@ -52,7 +60,12 @@ function(cmcs_init_project)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION_COMPATIBILITY)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
-    
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INPUT_FILE)
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
+ 
+    set(${_FUNC_PREFIX}_${PROJECT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
+
     set(${PROJECT_NAME}_PARENT ${CMAKE_PROJECT_NAME})
     cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
 
@@ -72,7 +85,10 @@ function(cmcs_init_project)
     ## Package Setup
     foreach(_package IN LISTS ${_VAR_PREFIX}_REQUIRED_PACKAGES)
         cmcs_define_project_used_package_properties(PROJECT_NAME "${PROJECT_NAME}" PACKAGE_NAME "${_package}")
-        cmake_parse_arguments("${_VAR_PREFIX}" "" "${_package}_VERSION" "${_package}_COMPONENTS;${_package}_FIND_OPTIONS" ${${_VAR_PREFIX}_UNPARSED_ARGUMENTS})
+        cmake_parse_arguments("${_VAR_PREFIX}" 
+                              "" 
+                              "${_package}_VERSION" 
+                              "${_package}_COMPONENTS;${_package}_FIND_OPTIONS" ${${_VAR_PREFIX}_UNPARSED_ARGUMENTS})
         cmcs_set_global_property(PREFIX ${_VAR_PREFIX} PROPERTY OPTIONAL_DEPENDENT_PACKAGES)
         set(_find_string "${_package}")
         if(DEFINED ${_VAR_PREFIX}_${_package}_VERSION)
@@ -143,4 +159,20 @@ function(cmcs_init_project)
         endif()
         unset(_find_string)
     endforeach()
+
+    foreach(_subdir IN LISTS ${_VAR_PREFIX}_SUBDIRECTORIES)
+        add_subdirectory("${_subdirs}")
+    endforeach()
+
+    foreach(_targetfile IN LISTS ${_VAR_PREFIX}_TARGET_FILES)
+        cmcs_read_target_file("${_targetfile}")
+    endforeach()
+
+    if(NOT ${_VAR_PREFIX}_NO_FINALIZE)
+        cmcs_finalize_project()
+    endif()
+
+    if(NOT ${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE)
+        cmcs_create_config_files()
+    endif()
 endfunction()

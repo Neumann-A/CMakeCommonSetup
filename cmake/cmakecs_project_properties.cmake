@@ -27,6 +27,14 @@ function(cmcs_define_project_properties) # Defines general project properties
                                 BRIEF_DOCS "Stores a list of exported targets in this project." FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_EXPORT_NAME
                                 BRIEF_DOCS "Stores the name of the export group for this project." FULL_DOCS " ")
+    cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_CONFIG_INSTALL_DESTINATION
+                                BRIEF_DOCS "Stores the installation destination for ${PACKAGE_NAME}Config.cmake and related files" FULL_DOCS " ")
+    cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_PUBLIC_CMAKE_FILES
+                                BRIEF_DOCS "Paths to public cmake files or modules which are required to be installed." 
+                                FULL_DOCS "Installation of cmake files/modules will be done into ${${_VAR_PREFIX}_PROJECT_NAME}_CONFIG_INSTALL_DESTINATION}/cmake")
+    cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_PUBLIC_CMAKE_DIRS
+                                BRIEF_DOCS "Paths to public cmake files or modules which are required to be installed." 
+                                FULL_DOCS "Installation of cmake files/modules will be done into ${${_VAR_PREFIX}_PROJECT_NAME}_CONFIG_INSTALL_DESTINATION}/cmake")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_LOCKED
                                 BRIEF_DOCS "Is the project finalized and locked?" FULL_DOCS " ")
 endfunction()

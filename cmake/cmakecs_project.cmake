@@ -73,3 +73,25 @@ macro(cmcs_project)
     if(NOT _PREVIOUS_LOCKED) # Previous Project is closed so this is a new Project on the same level
     endif()
 endmacro()
+
+macro(cmcs_project_file _filename)
+    set(VAR_PREFIX _cmcs_pf)
+    cmake_parse_arguments("${_VAR_PREFIX}" "TOPLEVEL" "" "" ${ARGN})
+    get_filename_component(${VAR_PREFIX}_filename_full_path "${_filename}" ABSOLUTE)
+    if(NOT EXISTS "${${VAR_PREFIX}_filename_full_path}")
+        cmcs_error_message("cmcs_project_file requires a valid relative or absolute filepath. Path given is:${_filename}")
+    endif()
+
+    file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
+
+    if(NOT ${CMAKE_PROJECT_NAME} AND ${_VAR_PREFIX}_TOPLEVEL)
+        cmcs_error_message("CMake requires a toplevel project() call in the toplevel CMakeLists.txt")
+    elseif(${_VAR_PREFIX}_TOPLEVEL)
+        cmcs_init_project(${${VAR_PREFIX}_contents}) 
+    else()
+        cmcs_project(${${VAR_PREFIX}_contents})
+    endif()
+
+    unset(${VAR_PREFIX}_filename_full_path )
+    unset(${VAR_PREFIX}_contents)
+endmacro()

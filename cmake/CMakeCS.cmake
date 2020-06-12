@@ -9,7 +9,7 @@ include(CMakeDependentOption) # https://cmake.org/cmake/help/latest/module/CMake
 include(FeatureSummary) # https://cmake.org/cmake/help/latest/module/FeatureSummary.html
 set(FeatureSummary_DEFAULT_PKG_TYPE REQUIRED CACHE INTERNAL "" FORCE)
 include(CMakePrintHelpers) # https://cmake.org/cmake/help/latest/module/CMakePrintHelpers.html
-include(CMakePrintSystemInformation)
+#include(CMakePrintSystemInformation)
 
 #include(SelectLibraryConfigurations) #https://cmake.org/cmake/help/latest/module/SelectLibraryConfigurations.html
 #include(GenerateExportHeader) #https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
@@ -45,16 +45,18 @@ list(APPEND cmakecs_cmake_files
             parse_arguments_helpers
             error_if_project_locked
             error_if_project_not_init
+            create_config_files
+            add_target
             project
             project_properties
             init_project
             finalize_project
             library
-            test
-            create_config_files
+            test            
             add_package_dependency_to_target
 )
 foreach(_file IN LISTS cmakecs_cmake_files)
+    #message("FILE:${_file}")
     include("${CMAKE_CURRENT_LIST_DIR}/cmakecs_${_file}.cmake")
 endforeach()
 

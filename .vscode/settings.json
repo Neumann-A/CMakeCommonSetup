@@ -2,5 +2,6 @@
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
     "cmake.configureOnOpen": true,
     "cmake.saveBeforeBuild": true,
+    //"cmake.configureArgs": ["","-Wdev","-DCMAKE_TOOLCHAIN_FILE:PATH=/mnt/c/Sources/Extern/vcpkg/scripts/buildsystems/vcpkg.cmake", "-DVCPKG_TARGET_TRIPLET=x64-windows-static"]
     "cmake.configureArgs": ["","-Wdev","-DCMAKE_TOOLCHAIN_FILE:PATH=${env:CMAKE_VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake", "-DVCPKG_TARGET_TRIPLET=x64-windows-static"]
 }

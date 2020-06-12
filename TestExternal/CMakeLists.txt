@@ -19,10 +19,11 @@ ExternalProject_Add(CMakeCS SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.."
                                              "-DBUILD_TESTING:BOOL=ON"
                                              "-DBUILD_DUMMY:BOOL=OFF"
                                              "-DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_SOURCE_DIR}/install"
-                            STEP_TARGETS install) # required to create a depend target
+                            STEP_TARGETS build install
+                            BUILD_ALWAYS ) # required to create a depend target
 #set(CMakeCS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build/CMakeCS" CACHE PATH "")
 
-ExternalProject_Add(DepCheck SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/DepCheck"
+ExternalProject_Add(DepCheck_One SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/DepCheck"
                              BINARY_DIR DepCheck
                              LOG_DOR log/DepCheck
                              CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}"
@@ -31,5 +32,18 @@ ExternalProject_Add(DepCheck SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/DepCheck"
                                               "-DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_SOURCE_DIR}/install"
 
                              DEPENDS CMakeCS-install
-                             STEP_TARGETS install)
+                             STEP_TARGETS build
+                             BUILD_ALWAYS )
+
+# ExternalProject_Add(DepCheck_Two SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/DepCheck"
+#                              BINARY_DIR DepCheck
+#                              LOG_DOR log/DepCheck
+#                              CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}"
+#                                               "-DVCPKG_TARGET_TRIPLET:STRING=${VCPKG_TARGET_TRIPLET}"
+#                                               "-DCMakeCS_DIR:PATH=${CMAKE_CURRENT_SOURCE_DIR}/build/CMakeCS/share/CMakeCS"
+#                                               "-DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_SOURCE_DIR}/install"
+
+#                              DEPENDS CMakeCS-build CMakeCS-install
+#                              STEP_TARGETS build install
+#                              BUILD_ALWAYS )
 #ExternalProject_Add_StepDependencies(DepCheck build CMakeCS)
