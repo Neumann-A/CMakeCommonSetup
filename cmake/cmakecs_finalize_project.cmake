@@ -53,7 +53,6 @@ function(cmcs_finalize_project)
                 FILE ${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake 
                 DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${${PROJECT_NAME}_PACKAGE_NAME}")
     endif()
-    set(${PROJECT_NAME}_LOCKED TRUE)
 
     # Alias all exported targets into the namespace ${PROJECT_NAME}_PACKAGE_NAME 
     # just as the target file would do. Assumes that all variables are available just 

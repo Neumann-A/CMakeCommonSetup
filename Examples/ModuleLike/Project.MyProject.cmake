@@ -34,3 +34,5 @@ TARGET_FILES # Files need to be in order of target requirements. Files will be s
     "Target.MyApp.cmake"
 OPTION_FILE
     "MyOptions.cmake"
+PUBLIC_CMAKE_DIRS
+    "cmake"

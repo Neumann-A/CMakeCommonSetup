@@ -30,7 +30,7 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON CACHE INTERNAL "Disable building in source 
 set(CMAKE_DISABLE_SOURCE_CHANGES ON CACHE INTERNAL "Disable changes to sources" FORCE)
 set(GLOBAL_DEPENDS_NO_CYCLES ON CACHE INTERNAL "Disallow cyclic dependencies between all targets" FORCE)
 
-set(CMAKE_FOLDER "BLA" CACHE INTERNAL "Enable folder layout as source layout in IDEs supporting it." FORCE)
+#set(CMAKE_FOLDER "BLA" CACHE INTERNAL "Enable folder layout as source layout in IDEs supporting it." FORCE)
 
 set(CMakeCS_MSG_ERROR_TYPE SEND_ERROR CACHE INTERNAL "CMakeCS message error type! (DEFAULT: SEND_ERROR)")
 set(CMakeCS_MSG_WARNING_TYPE SEND_ERROR CACHE INTERNAL "CMakeCS message warning type!  (DEFAULT: SEND_ERROR)")
@@ -39,24 +39,30 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   message(${CMakeCS_MSG_ERROR_TYPE} "In-source builds are not allowed.")
 endif ()
 
+option(CMakeCS_ENABLE_PROJECT_OVERRIDE "Enable override of the cmake function project with the one from CMakeCS (default:OFF)" OFF)
+CMAKE_DEPENDENT_OPTION(CMakeCS_USE_PROJECT_OVERRIDE "Use the project() override in the project call" ON "CMakeCS_ENABLE_PROJECT_OVERRIDE" OFF)
+
+# Reset global variables. 
+set(CMakeCS_ALL_PROJECTS "" CACHE INTERNAL "List of all projects")
+set(CMakeCS_TOP_PROJECTS "" CACHE INTERNAL "List of only top level projects")
+
 list(APPEND cmakecs_cmake_files 
             common_cmake_options
             small_macros_and_functions
             parse_arguments_helpers
             error_if_project_locked
             error_if_project_not_init
+            sanetize_input
             create_config_files
             add_target
             project
             project_properties
             init_project
-            finalize_project
-            library
+            finalize_project            
             test            
-            add_package_dependency_to_target
+            get_toplevel_project_info
 )
 foreach(_file IN LISTS cmakecs_cmake_files)
-    #message("FILE:${_file}")
     include("${CMAKE_CURRENT_LIST_DIR}/cmakecs_${_file}.cmake")
 endforeach()
 

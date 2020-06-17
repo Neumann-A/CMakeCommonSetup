@@ -44,13 +44,13 @@ function(cmcs_define_project_used_package_properties) # Defines properties of us
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "" "PROJECT_NAME;PACKAGE_NAME" "")
     cmcs_variable_exists_or_error(PREFIX ${_VAR_PREFIX} VARIABLES "PROJECT_NAME;PACKAGE_NAME")
     cmcs_define_global_property(PROPERTY ${PROJECT_NAME}_${PACKAGE_NAME}_VERSION
-                            BRIEF_DOCS "Package Version of ${PACKAGE_NAME} used by ${PROJECT_NAME}" FULL_DOCS " ")
+                            BRIEF_DOCS "Package Version of ${${_VAR_PREFIX}_PACKAGE_NAME} used by ${${_VAR_PREFIX}_PROJECT_NAME}" FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${PROJECT_NAME}_${PACKAGE_NAME}_CONDITION
-                            BRIEF_DOCS "Condition under which ${PACKAGE_NAME} is used by ${PROJECT_NAME}" FULL_DOCS " ")
+                            BRIEF_DOCS "Condition under which ${${_VAR_PREFIX}_PACKAGE_NAME} is used by ${${_VAR_PREFIX}_PROJECT_NAME}" FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${PROJECT_NAME}_${PACKAGE_NAME}_COMPONENTS
-                                BRIEF_DOCS "Components of ${PACKAGE_NAME} used by ${PROJECT_NAME}" FULL_DOCS " ")
+                                BRIEF_DOCS "Components of ${${_VAR_PREFIX}_PACKAGE_NAME} used by ${${_VAR_PREFIX}_PROJECT_NAME}" FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${PROJECT_NAME}_${PACKAGE_NAME}_FIND_OPTIONS
-                                BRIEF_DOCS "Additional options used in the find_package call for ${PACKAGE_NAME} used by ${PROJECT_NAME}" FULL_DOCS " ")
+                                BRIEF_DOCS "Additional options used in the find_package call for ${${_VAR_PREFIX}_PACKAGE_NAME} used by ${${_VAR_PREFIX}_PROJECT_NAME}" FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${PROJECT_NAME}_${PACKAGE_NAME}_FIND_PACKAGE
-                                BRIEF_DOCS "find_package call for ${PACKAGE_NAME} used by ${PROJECT_NAME}" FULL_DOCS " ")
+                                BRIEF_DOCS "find_package call for ${${_VAR_PREFIX}_PACKAGE_NAME} used by ${${_VAR_PREFIX}_PROJECT_NAME}" FULL_DOCS " ")
 endfunction()

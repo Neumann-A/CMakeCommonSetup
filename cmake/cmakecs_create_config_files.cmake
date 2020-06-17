@@ -3,7 +3,7 @@
 function(cmcs_create_config_files)
     cmcs_create_function_variable_prefix(_VAR_PREFIX)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "NO_SET_CHECK;NO_COMPONENTS;SETUP_MODULE_PATH" 
-                          "INPUT_FILE;INSTALL_DESTINATION;COMPATIBILITY" "VARS;PATHLIKE_VARS;PATH_VARS")
+                          "INPUT_FILE;INSTALL_DESTINATION;COMPATIBILITY" "VARS;PATHLIKE_VARS;PATH_VARS;MODULES_TO_INCLUDE")
 
     cmcs_error_if_project_locked()
     cmcs_error_if_project_not_init()
@@ -15,6 +15,7 @@ function(cmcs_create_config_files)
 
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_DIRS)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_MODULES_TO_INCLUDE)
 
     if(IS_ABSOLUTE "${${_VAR_PREFIX}_INSTALL_DESTINATION}")
         cmcs_error_message("Config file installation destination needs to be relative! INSTALL_DESTINATION:${${_VAR_PREFIX}_INSTALL_DESTINATION}!")
@@ -29,33 +30,44 @@ function(cmcs_create_config_files)
         string(APPEND _config_contents "cmake_policy (PUSH)\n")
         string(APPEND _config_contents "cmake_minimum_required (VERSION 3.17)\n\n")
 
-        if(${_VAR_PREFIX}_SETUP_MODULE_PATH)        
+        if(${_VAR_PREFIX}_SETUP_MODULE_PATH)
+            list(APPEND ${PROJECT_NAME}_CONFIG_VARS \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH)
+            string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake\")\n")        
             string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH_BACKUP \${CMAKE_MODULE_PATH})\n")
-            string(APPEND _config_contents "list(PREPEND CMAKE_MODULE_PATH \${CMAKE_CURRENT_LIST_DIR}/cmake)\n")
+            string(APPEND _config_contents "list(PREPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake\")\n") # Prepending makes sure we get the correct modules
             string(APPEND _config_contents "if(@${PROJECT_NAME}_BUILD_DIR_CONFIG@)\n")
             foreach(_dir IN LISTS ${PROJECT_NAME}_PUBLIC_CMAKE_DIRS)
                 if(IS_ABSOLUTE "${_dir}")
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${_dir})\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${_dir}\")\n")
                 else()
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${_dir})\n")
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${_dir})\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_BINARY_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${CMAKE_CURRENT_BINARY_DIR}/${_dir}\")\n")
                 endif()
             endforeach()
-            foreach(_file IN LISTS ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
+            foreach(_file IN LISTS ${PROJECT_NAME}_PUBLIC_CMAKE_FILES) # should probably be removed
                 get_filename_component(_dir "${_file}" DIRECTORY)
                 if(IS_ABSOLUTE "${_dir}")
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${_dir})\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${_dir}\")\n")
                 else()
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/${_dir})\n")
-                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_BINARY_DIR}/${_dir})\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(PREPEND CMAKE_MODULE_PATH \"${CMAKE_CURRENT_BINARY_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/${_dir}\")\n")
+                    string(APPEND _config_contents "    list(APPEND \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"${CMAKE_CURRENT_BINARY_DIR}/${_dir}\")\n")
                 endif()
             endforeach()
             string(APPEND _config_contents "endif()\n")
-            string(APPEND _config_contents "list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)\n\n")
+            string(APPEND _config_contents "list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)\n")
+            string(APPEND _config_contents "list(REMOVE_DUPLICATES \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH)\n")
+            string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH \"\${\${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH}\" CACHE INTERNAL)\n\n")   
         endif()
 
 
-        string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_BUILD_SHARED @BUILD_SHARED_LIBS@)\n")
+        string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_BUILD_AS_SHARED @BUILD_SHARED_LIBS@ CACHE INTERNAL \"\")\n")
+        list(APPEND ${PROJECT_NAME}_CONFIG_VARS \${CMAKE_FIND_PACKAGE_NAME}_BUILD_AS_SHARED)
         string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_BUILD_DIR_CONFIG @${PROJECT_NAME}_BUILD_DIR_CONFIG@) # Is config within build dir?\n")
         set(${_VAR_PREFIX}_NO_SET_CHECK)
         if(NOT ${_VAR_PREFIX}_PATH_VARS)
@@ -63,10 +75,12 @@ function(cmcs_create_config_files)
         else()
         string(APPEND _config_contents "\n # Deal with variables\n")
             foreach(_var IN LISTS ${_VAR_PREFIX}_VARS)
-                string(APPEND _config_contents "    set(\${CMAKE_FIND_PACKAGE_NAME}_${_var} @${_var}@)\n")   
+                string(APPEND _config_contents "    set(\${CMAKE_FIND_PACKAGE_NAME}_${_var} @${_var}@ CACHE INTERNAL \"\")\n")
+                list(APPEND ${PROJECT_NAME}_CONFIG_VARS \${CMAKE_FIND_PACKAGE_NAME}_${_var})
             endforeach()
             string(APPEND _config_contents "if(\${CMAKE_FIND_PACKAGE_NAME}_BUILD_DIR_CONFIG)\n")
             foreach(_path_var IN LISTS ${_VAR_PREFIX}_PATH_VARS)
+                list(APPEND ${PROJECT_NAME}_CONFIG_VARS \${CMAKE_FIND_PACKAGE_NAME}_${_path_var})
                 string(APPEND _config_contents "    message(\"\${CMAKE_FIND_PACKAGE_NAME}_${_path_var}:@PACKAGE_${_path_var}@\")\n")
                 string(APPEND _config_contents "    set_and_check(\${CMAKE_FIND_PACKAGE_NAME}_${_path_var} @PACKAGE_${_path_var}@)\n")   
                 string(APPEND _config_contents "    set_and_check(\${CMAKE_FIND_PACKAGE_NAME}_${_path_var} @PACKAGE_${_path_var}@@${PROJECT_NAME}_BUILD_RELATIVE_PATH@)\n")          
@@ -78,6 +92,14 @@ function(cmcs_create_config_files)
             endforeach()
             string(APPEND _config_contents "endif())\n")
         endif(NOT ${_VAR_PREFIX}_PATH_VARS)
+
+        string(APPEND _config_contents "\n # Deal with modules to include\n")
+        foreach(_module IN LISTS ${PROJECT_NAME}_MODULES_TO_INCLUDE)
+            string(APPEND _config_contents "option(\${CMAKE_FIND_PACKAGE_NAME}_WITHOUT_CMAKE_MODULE_${_module} \"Deactivate inclusion of module ${_module} for \${CMAKE_FIND_PACKAGE_NAME} \" OFF)\n")
+            string(APPEND _config_contents "if(NOT \${CMAKE_FIND_PACKAGE_NAME}_WITHOUT_CMAKE_MODULE_${_module})\n")
+            string(APPEND _config_contents "    include(${_module})\n")
+            string(APPEND _config_contents "endif()\n")
+        endforeach()
 
         string(APPEND _config_contents "\n # Deal with dependencies \n")
         # Deal with dependencies
@@ -139,9 +161,13 @@ function(cmcs_create_config_files)
         string(APPEND _config_contents "\n # Finish up \n")
         string(APPEND _config_contents "include(\${CMAKE_CURRENT_LIST_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake)\n")
         if(${_VAR_PREFIX}_SETUP_MODULE_PATH)
-            string(APPEND _config_contents "set(CMAKE_MODULE_PATH \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH_BACKUP)\n")
+            string(APPEND _config_contents "set(CMAKE_MODULE_PATH \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH_BACKUP)\n") # Restoring old module path
+        endif()        
+        string(APPEND _config_contents "find_package_handle_standard_args(\${CMAKE_FIND_PACKAGE_NAME} CONFIG_MODE HANDLE_COMPONENTS\n")
+        if(${PROJECT_NAME}_CONFIG_VARS)
+            string(APPEND _config_contents "                                  REQUIRED_VARS @${PROJECT_NAME}_CONFIG_VARS@\n")
         endif()
-        string(APPEND _config_contents "find_package_handle_standard_args(\${CMAKE_FIND_PACKAGE_NAME} CONFIG_MODE)\n")
+        string(APPEND _config_contents "                                  )\n")
         string(APPEND _config_contents "cmake_policy (POP)\n")
 
 # find_package_handle_standard_args(<PackageName>
@@ -172,7 +198,7 @@ function(cmcs_create_config_files)
     set(${PROJECT_NAME}_BUILD_DIR_CONFIG FALSE)
     configure_package_config_file(
             "${${_VAR_PREFIX}_INPUT_FILE}"
-            "${${_VAR_PREFIX}_INSTALL_DESTINATION}/${PROJECT_SHORT_NAME}Config.install.cmake"
+            "${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}Config.install.cmake"
             INSTALL_DESTINATION "$<INSTALL_INTERFACE:${${_VAR_PREFIX}_INSTALL_DESTINATION}>"
             PATH_VARS ${${_VAR_PREFIX}_PATH_VARS}
             ${${_VAR_PREFIX}_NO_COMPONENTS}
@@ -184,7 +210,7 @@ function(cmcs_create_config_files)
         set(${PROJECT_NAME}_BUILD_DIR_CONFIG TRUE)
         configure_package_config_file(
                 "${${_VAR_PREFIX}_INPUT_FILE}"
-                "${${_VAR_PREFIX}_INSTALL_DESTINATION}/${PROJECT_SHORT_NAME}Config.cmake"
+                "${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}Config.cmake"
                 INSTALL_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}"
                 #INSTALL_DESTINATION "$<BUILD_INTERFACE:${REL_CONFIG_PATH}/${${_VAR_PREFIX}_INSTALL_DESTINATION}>"
                 PATH_VARS ${${_VAR_PREFIX}_PATH_VARS} ${PROJECT_NAME}_RELATIVE_SOURCE_PATH 

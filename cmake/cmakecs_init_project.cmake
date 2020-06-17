@@ -17,28 +17,32 @@
 
 # All info is getting stored in ${PROJECT_NAME}_<parametername>
 function(cmcs_init_project)
+    message(TRACE "[CMakeCS cmcs_init_project]: ${ARGN}|${ARGC}")
     include(CTest) # https://cmake.org/cmake/help/latest/module/CTest.html
     include(CPack) # https://cmake.org/cmake/help/latest/module/CPack.html
     cmcs_create_function_variable_prefix(_FUNC_PREFIX)
-    set(_VAR_PREFIX ${_FUNC_PREFIX}_${PROJECT_NAME})
-    cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" 
-                                       "NO_FINALIZE;NO_AUTOMATIC_CONFIG_FILE" 
-                                       "PACKAGE_NAME;NAMESPACE;EXPORT_NAME;VERSION;VERSION_COMPATIBILITY;CONFIG_INPUT_FILE;CONFIG_INSTALL_DESTINATION;OPTION_FILE" 
-                                       "REQUIRED_PACKAGES;OPTIONAL_PACKAGES;OPTIONAL_CONDITIONAL_PACKAGES;PUBLIC_CMAKE_FILES;PUBLIC_CMAKE_DIRS;SUBDIRECTORIES;TARGET_FILES")
-
+    message(TRACE: "PROJECT_NAME:${PROJECT_NAME}")
+    set(_VAR_PREFIX "${_FUNC_PREFIX}_${PROJECT_NAME}")
+    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
+    include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
+    cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "${PROJECT_OPTIONS}" "${PROJECT_ARGS}" "${PROJECT_MULTI_ARGS}")
+    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
     if(${PROJECT_NAME}_PARENT)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${PROJECT_NAME}_PARENT}${PROJECT_NAME})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_NAMESPACE)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${${PROJECT_NAME}_PARENT}_NAMESPACE})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_VERSION)
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT ${${${PROJECT_NAME}_PARENT}_VERSION})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_VERSION_COMPATIBILITY)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT ${${${PROJECT_NAME}_PARENT}_VERSION_COMPATIBILITY})
     else()
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${PROJECT_NAME})
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT "0.1")
+        if(CMAKE_PROJECT_VERSION)
+            cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT ${CMAKE_PROJECT_VERSION})
+        else()
+            cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT "0.1")
+        endif()
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT "AnyNewerVersion")
     endif()
     
@@ -62,7 +66,9 @@ function(cmcs_init_project)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INPUT_FILE)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
- 
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_DIRS)
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_MODULES_TO_INCLUDE)
+
     set(${_FUNC_PREFIX}_${PROJECT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
 
@@ -76,9 +82,9 @@ function(cmcs_init_project)
     if(${PROJECT_NAME}_IS_SUBPROJECT)
         set(${CMAKE_PROJECT_NAME}_SUBPROJECTS ${${CMAKE_PROJECT_NAME}_SUBPROJECTS} ${PROJECT_NAME} CACHE INTERNAL "")
     else()
-        set(CMAKECS_TOP_PROJECTS ${CMAKECS_PROJECTS} ${PROJECT_NAME} CACHE INTERNAL "")
+        set(CMakeCS_TOP_PROJECTS ${CMakeCS_PROJECTS} ${PROJECT_NAME} CACHE INTERNAL "")
     endif()
-    set(CMAKECS_ALL_PROJECTS ${CMAKECS_ALL_PROJECTS} ${PROJECT_NAME} CACHE INTERNAL "")
+    set(CMakeCS_ALL_PROJECTS ${CMakeCS_ALL_PROJECTS} ${PROJECT_NAME} CACHE INTERNAL "")
 
     set(${PROJECT_NAME}_EXPORTED_TARGETS "" CACHE INTERNAL "Exported targets of the project" FORCE)
 
@@ -160,19 +166,29 @@ function(cmcs_init_project)
         unset(_find_string)
     endforeach()
 
+    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     foreach(_subdir IN LISTS ${_VAR_PREFIX}_SUBDIRECTORIES)
-        add_subdirectory("${_subdirs}")
+        message(TRACE "Adding subdirectory ${_subdir} to project ${PROJECT_NAME}")
+        add_subdirectory("${_subdir}")
     endforeach()
 
+    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     foreach(_targetfile IN LISTS ${_VAR_PREFIX}_TARGET_FILES)
-        cmcs_read_target_file("${_targetfile}")
+        message(TRACE "Reading target file ${_targetfile} for project ${PROJECT_NAME}")
+        cmcs_read_target_file(${_targetfile})
     endforeach()
+
+    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
+    message(STATUS "${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE:${${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE}")
+    if(NOT ${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE)
+        if(${_VAR_PREFIX}_CONFIG_WITH_MODULES)
+            cmcs_create_config_files(SETUP_MODULE_PATH)
+        else()
+            cmcs_create_config_files()
+        endif()
+    endif()
 
     if(NOT ${_VAR_PREFIX}_NO_FINALIZE)
         cmcs_finalize_project()
-    endif()
-
-    if(NOT ${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE)
-        cmcs_create_config_files()
     endif()
 endfunction()
