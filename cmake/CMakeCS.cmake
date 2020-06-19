@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.17)
 include_guard(GLOBAL)
 
 include(CMakePackageConfigHelpers) # https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
-include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+
 include(CMakeDependentOption) # https://cmake.org/cmake/help/latest/module/CMakeDependentOption.html
 
 include(FeatureSummary) # https://cmake.org/cmake/help/latest/module/FeatureSummary.html
@@ -15,6 +15,9 @@ include(CMakePrintHelpers) # https://cmake.org/cmake/help/latest/module/CMakePri
 include(GenerateExportHeader) # https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
 #include(WriteCompilerDetectionHeader) #https://cmake.org/cmake/help/latest/module/WriteCompilerDetectionHeader.html
 #include(InstallRequiredSystemLibraries) https://cmake.org/cmake/help/latest/module/InstallRequiredSystemLibraries.html
+
+# Not applicable includes:
+#include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html (Requires prior project() call)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY REPORT_UNDEFINED_PROPERTIES "${CMAKE_BINARY_DIR}/undef_properties.log")
