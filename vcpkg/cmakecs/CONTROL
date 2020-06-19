@@ -1,4 +1,4 @@
-Source: CMakeCS
+Source: cmakecs
 Version: 0.1
 Homepage: https://github.com/Neumann-A/CMakeCommonSetup
 Description: Common CMake scripts to setup projects, tests, dependencies (via package managers) and other stuff
