@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.17)
 
-if(NOT VCPKG_TARGET_TRIPLET)
+if(NOT VCPKG_TARGET_TRIPLET AND NOT DEFINED ENV{VCPKG_DEFAULT_TRIPLET})
   if(WIN32)
     set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "" FORCE)
   elseif(MSYS)
@@ -19,7 +19,7 @@ endif()
 set(CMakeCS_ENABLE_PROJECT_OVERRIDE ON CACHE BOOL "")
 
 set(CMAKE_MESSAGE_LOG_LEVEL TRACE CACHE STRING "CMake message log level (default: )")
-enable_language(C CXX)
+enable_language(CXX)
 include(cmake/CMakeCS.cmake)
 
 # This is ugly but will fire a CMake warning if the first project 

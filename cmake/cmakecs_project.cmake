@@ -6,7 +6,7 @@ function(cmcs_project)
     set(VAR_PREFIX _cmcs_p)
     include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
     cmake_parse_arguments("${VAR_PREFIX}" "${PROJECT_OPTIONS}" "${PROJECT_ARGS}" "${PROJECT_MULTI_ARGS}" "${ARGN}")
-    if(${VAR_PREFIX}_UNPARSED_ARGUMENTS)
+    if(${VAR_PREFIX}_UNPARSED_ARGUMENTS AND NOT ${VAR_PREFIX}_EXTENDED_PACKAGES_INFO)
         cmcs_error_message("Unparsed arguments found in call to cmcs_init_project.\nUnparsed:${${VAR_PREFIX}_UNPARSED_ARGUMENTS}")
     endif()
     
