@@ -25,7 +25,7 @@ include(cmake/CMakeCS.cmake)
 # This is ugly but will fire a CMake warning if the first project 
 # call is not directly called in the toplevel CMakeLists.txt
 
-set(PROJECT_FILE "Project.CMakeCS.cmake")
+set(PROJECT_FILE "Project.CMakeCS.cmakecs")
 # cmcs_get_toplevel_project_info(PROJECT_PARAMETERS ${PROJECT_FILE})
 # project(${PROJECT_PARAMETERS}) 
 # cmcs_project_file(${PROJECT_FILE} TOPLEVEL)

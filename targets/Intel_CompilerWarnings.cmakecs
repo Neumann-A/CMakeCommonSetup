@@ -1,0 +1,6 @@
+TARGET_NAME
+    Intel_CompilerWarnings
+LIBRARY_TYPE
+    INTERFACE 
+INTERFACE_COMPILE_DEFINITIONS
+# TODO: Define Warnings for ICC

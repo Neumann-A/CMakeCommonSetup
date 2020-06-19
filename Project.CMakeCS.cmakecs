@@ -21,7 +21,11 @@ MODULES_TO_INCLUDE
 REQUIRED_PACKAGES
     GTest
 TARGET_FILES
-    Target.TestWrapper.cmake
+   targets/Clang_GCC_CompilerWarnings.cmakecs
+   targets/Intel_CompilerWarnings.cmakecs
+   targets/MSVC_CompilerWarnings.cmakecs
+   targets/CompilerWarnings.cmakecs
+   targets/GTestWrapper.cmakecs
 EXTENDED_PACKAGES_INFO
 GTest_FIND_OPTIONS
     CONFIG

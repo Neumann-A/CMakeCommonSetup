@@ -1,0 +1,11 @@
+TARGET_NAME
+    CompilerWarnings
+LIBRARY_TYPE
+    INTERFACE 
+INTERFACE_DEPENDS
+    $<$<COMPILE_LANG_AND_ID:C,MSVC>:CMakeCS::MSVC_CompilerWarnings>   
+    $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:CMakeCS::MSVC_CompilerWarnings>
+    $<$<COMPILE_LANG_AND_ID:C,GNU,AppleClang,Clang>:CMakeCS::Clang_GCC_CompilerWarnings>
+    $<$<COMPILE_LANG_AND_ID:CXX,GNU,AppleClang,Clang>:CMakeCS::Clang_GCC_CompilerWarnings>
+    $<$<COMPILE_LANG_AND_ID:C,Intel>:CMakeCS::Intel_CompilerWarnings>
+    $<$<COMPILE_LANG_AND_ID:CXX,Intel>:CMakeCS::Intel_CompilerWarnings>

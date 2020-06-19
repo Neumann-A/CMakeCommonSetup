@@ -1,10 +1,11 @@
 TARGET_NAME
-    GTest_TestWrapper
+    GTestWrapper
 LIBRARY_TYPE
-    INTERFACE #SHARED    
+    INTERFACE 
 INTERFACE_DEPENDS 
     GTest::gtest
     GTest::gtest_main
+    CompilerWarnings
 INTERFACE_COMPILE_FEATURES
     c++17
 #GENERATE_EXPORT_HEADER
