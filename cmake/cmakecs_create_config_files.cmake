@@ -133,7 +133,7 @@ function(cmcs_create_config_files)
 
         string(APPEND _config_contents "\n # Optional dependent dependencies \n")
         # Write find_dependency calls for dependent optional packages
-        foreach(_extpackage IN LISTS ${PROJECT_NAME}_OPTIONAL_DEPENDENT_PACKAGES)
+        foreach(_extpackage IN LISTS ${PROJECT_NAME}_OPTIONAL_CONDITIONAL_PACKAGES)
             cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_${_extpackage}_FIND_PACKAGE)
             list(REMOVE_ITEM ${PROJECT_NAME}_${_extpackage}_FIND_PACKAGE REQUIRED) # handled by find_dependecy
             string(APPEND _config_contents "set (${${PROJECT_NAME}_PACKAGE_NAME}_ENABLE_${_extpackage} @${${PROJECT_NAME}_PACKAGE_NAME}_ENABLE_${_extpackage}@)\n")

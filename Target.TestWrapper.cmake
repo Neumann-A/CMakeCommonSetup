@@ -1,9 +1,14 @@
 TARGET_NAME
     GTest_TestWrapper
 LIBRARY_TYPE
-    INTERFACE    
+    INTERFACE #SHARED    
 INTERFACE_DEPENDS 
     GTest::gtest
-    $<$<BOOL:LINK_gtest_main>:GTest::gtest_main>
+    GTest::gtest_main
 INTERFACE_COMPILE_FEATURES
     c++17
+#GENERATE_EXPORT_HEADER
+#PROPERTIES
+#    LINKER_LANGUAGE CXX
+#SOURCES
+#    src/dummy.cpp

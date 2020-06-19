@@ -12,7 +12,7 @@ include(CMakePrintHelpers) # https://cmake.org/cmake/help/latest/module/CMakePri
 #include(CMakePrintSystemInformation)
 
 #include(SelectLibraryConfigurations) #https://cmake.org/cmake/help/latest/module/SelectLibraryConfigurations.html
-#include(GenerateExportHeader) #https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
+include(GenerateExportHeader) # https://cmake.org/cmake/help/latest/module/GenerateExportHeader.html
 #include(WriteCompilerDetectionHeader) #https://cmake.org/cmake/help/latest/module/WriteCompilerDetectionHeader.html
 #include(InstallRequiredSystemLibraries) https://cmake.org/cmake/help/latest/module/InstallRequiredSystemLibraries.html
 

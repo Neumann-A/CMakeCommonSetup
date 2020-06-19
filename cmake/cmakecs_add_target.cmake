@@ -1,10 +1,13 @@
 function(cmcs_add_target)
     cmcs_create_function_variable_prefix(_VAR_PREFIX)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" 
-                                       "EXECUTABLE;NO_EXPORT;AUTO_GLOB_SOURCE;AUTO_GLOB_INCLUDE" 
+                                       "EXECUTABLE;NO_TARGET_EXPORT;AUTO_GLOB_SOURCE;AUTO_GLOB_INCLUDE;GENERATE_EXPORT_HEADER" 
                                        "TARGET_NAME;LIBRARY_TYPE;EXECUTABLE_TYPE" 
                                        "PUBLIC_SOURCES;PRIVATE_SOURCES;INTERFACE_SOURCES;SOURCES;PRIVATE_DEPENDS;PUBLIC_DEPENDS;INTERFACE_DEPENDS;PUBLIC_DEFINITIONS;PRIVATE_DEFINITIONS;INTERFACE_DEFINITIONS;PUBLIC_COMPILE_OPTIONS;PRIVATE_COMPILE_OPTIONS;INTERFACE_COMPILE_OPTIONS;PUBLIC_COMPILE_FEATURES;PRIVATE_COMPILE_FEATURES;INTERFACE_COMPILE_FEATURES;PROPERTIES;PUBLIC_INCLUDE_DIRECTORIES;PRIVATE_INCLUDE_DIRECTORIES;INTERFACE_INCLUDE_DIRECTORIES;PUBLIC_LINK_OPTIONS;PRIVATE_LINK_OPTIONS;INTERFACE_LINK_OPTIONS;PUBLIC_PRECOMPILE_HEADERS;PRIVATE_PRECOMPILE_HEADERS;INTERFACE_PRECOMPILE_HEADERS;REUSE_PRECOMPILE_HEADERS_FROM_TARGETS;HEADERS;HEADER_DIRECTORIES_TO_INSTALL")
 
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION)
+    
     if(${_VAR_PREFIX}_AUTO_GLOB_SOURCE) 
         file(GLOB_RECURSE ${_VAR_PREFIX}_SOURCES CONFIGURE_DEPENDS "src/*")
     endif()
@@ -14,10 +17,31 @@ function(cmcs_add_target)
         set(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL include)
     endif()
 
+    if(${_VAR_PREFIX}_GENERATE_EXPORT_HEADER)
+        set(BASE_NAME ${${_VAR_PREFIX}_TARGET_NAME})
+        list(APPEND ${_VAR_PREFIX}_HEADERS ${PROJECT_BINARY_DIR}/${BASE_NAME}_export.h)
+    endif()
+
     if(${_VAR_PREFIX}_EXECUTABLE OR ${_VAR_PREFIX}_EXECUTABLE_TYPE)
         add_executable(${${_VAR_PREFIX}_TARGET_NAME} ${${_VAR_PREFIX}_EXECUTABLE_TYPE} ${${_VAR_PREFIX}_SOURCES} ${${_VAR_PREFIX}_HEADERS})
     else()
         add_library(${${_VAR_PREFIX}_TARGET_NAME} ${${_VAR_PREFIX}_LIBRARY_TYPE} ${${_VAR_PREFIX}_SOURCES} ${${_VAR_PREFIX}_HEADERS})
+    endif()
+
+    if(${_VAR_PREFIX}_GENERATE_EXPORT_HEADER)        
+        generate_export_header(${${_VAR_PREFIX}_TARGET_NAME} BASE_NAME ${BASE_NAME}) 
+        # PREFIX_NAME 
+        if(NOT BUILD_SHARED_LIBS OR ${_VAR_PREFIX}_LIBRARY_TYPE MATCHES "STATIC")
+            if(${${_VAR_PREFIX}_LIBRARY_TYPE} MATCHES "INTERFACE")
+                target_compile_definitions(${${_VAR_PREFIX}_TARGET_NAME} INTERFACE $<UPPER_CASE:${BASE_NAME}>_STATIC_DEFINE) # Will not generate header
+            else()
+                target_compile_definitions(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<UPPER_CASE:${BASE_NAME}>_STATIC_DEFINE)
+            endif()
+        else()
+            target_compile_definitions(${${_VAR_PREFIX}_TARGET_NAME} PRIVATE ${BASE_NAME}_EXPORTS)
+        endif()
+        install(FILES ${PROJECT_BINARY_DIR}/${BASE_NAME}_export.h  DESTINATION include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} COMPONENT Development)
+        list(APPEND ${_VAR_PREFIX}_HEADERS ${PROJECT_BINARY_DIR}/${BASE_NAME}_export.h)
     endif()
 
     ## Setup target
@@ -25,7 +49,7 @@ function(cmcs_add_target)
     foreach(_dep IN LISTS _deps_list)
         if(${_VAR_PREFIX}_${_dep}_DEPENDS)
             target_link_libraries(${${_VAR_PREFIX}_TARGET_NAME} ${_dep} ${${_VAR_PREFIX}_${_dep}_DEPENDS})
-            string(REPLACE "$<" "?<" ${_VAR_PREFIX}_${_dep}_DEPENDS_QUESTION ${${_VAR_PREFIX}_${_dep}_DEPENDS}) # cannot have generator expressions in custom properties
+            string(REPLACE "$<" "?<" ${_VAR_PREFIX}_${_dep}_DEPENDS_QUESTION "${${_VAR_PREFIX}_${_dep}_DEPENDS}") # cannot have generator expressions in custom properties
             set_property(TARGET ${${_VAR_PREFIX}_TARGET_NAME} PROPERTY cmakecs_${_dep}_DEPENDS ${${_VAR_PREFIX}_${_dep}_DEPENDS_QUESTION})
             set_property(TARGET ${${_VAR_PREFIX}_TARGET_NAME} APPEND PROPERTY EXPORT_PROPERTIES cmakecs_${_dep}_DEPENDS)
         endif()
@@ -59,14 +83,11 @@ function(cmcs_add_target)
         endforeach()
     endif()
 
-    source_group(TREE ${CMAKE_CURRENT_FUNCTION_LIST_DIR} FILES ${${_VAR_PREFIX}_SOURCES} ${${_VAR_PREFIX}_HEADERS})
+    source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${${_VAR_PREFIX}_SOURCES} ${${_VAR_PREFIX}_HEADERS})
 
     if(${_VAR_PREFIX}_PROPERTIES)
         set_target_properties(${${_VAR_PREFIX}_TARGET_NAME} PROPERTIES ${${_VAR_PREFIX}_PROPERTIES})
     endif()
-
-    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
-    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION)
 
     #target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}>)
 
@@ -82,9 +103,10 @@ function(cmcs_add_target)
             endif()
         endforeach()
         install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} COMPONENT Development)
+
     endif()
 
-    if(NOT ${_VAR_PREFIX}_NO_EXPORT)     
+    if(NOT ${_VAR_PREFIX}_NO_TARGET_EXPORT)     
         set(${PROJECT_NAME}_EXPORTED_TARGETS ${${PROJECT_NAME}_EXPORTED_TARGETS} ${${_VAR_PREFIX}_TARGET_NAME} CACHE INTERNAL "")
         cmcs_set_global_property(APPEND_OPTION "APPEND" PROPERTY ${PROJECT_NAME}_EXPORTED_TARGETS)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
