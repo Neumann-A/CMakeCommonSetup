@@ -1,0 +1,9 @@
+TARGET_NAME
+    DummyTarget
+LIBRARY_TYPE
+    STATIC 
+INTERFACE_DEPENDS
+    CompilerWarnings
+SOURCES
+    src/dummy.cpp
+NO_TARGET_EXPORT

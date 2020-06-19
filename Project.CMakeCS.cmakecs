@@ -26,6 +26,7 @@ TARGET_FILES
    targets/MSVC_CompilerWarnings.cmakecs
    targets/CompilerWarnings.cmakecs
    targets/GTestWrapper.cmakecs
-EXTENDED_PACKAGES_INFO
+   targets/DummyTarget.cmakecs
+EXTENDED_PACKAGES_INFO # Parse blocker for dynamic/unknown options. 
 GTest_FIND_OPTIONS
     CONFIG
