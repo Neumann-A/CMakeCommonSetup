@@ -2,7 +2,7 @@
 
 # USE_DIRECTORY_AS_PROJECT_NAME -> Uses the current directory (CMAKE_PARENT_LIST_FILE) name as the project name
 # 
-function(cmcs_project)
+macro(cmcs_project)
     set(VAR_PREFIX _cmcs_p)
     include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
     cmake_parse_arguments("${VAR_PREFIX}" "${PROJECT_OPTIONS}" "${PROJECT_ARGS}" "${PROJECT_MULTI_ARGS}" "${ARGN}")
@@ -88,9 +88,14 @@ function(cmcs_project)
     elseif(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) # New Top Level Project
         # Check if previous project has been closed!
     endif()
-    cmcs_init_project(${ARGN})
+
+    foreach(_option IN LISTS PROJECT_OPTIONS PROJECT_ARGS PROJECT_MULTI_ARGS)
+        unset(${VAR_PREFIX}_${_option})
+    endforeach()
     unset(VAR_PREFIX)
-endfunction()
+
+    cmcs_init_project(${ARGN})
+endmacro()
 
 function(cmcs_project_file _filename)
     set(VAR_PREFIX _cmcs_pf)
