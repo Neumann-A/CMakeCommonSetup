@@ -4,8 +4,8 @@
 # 
 macro(cmcs_project)
     set(VAR_PREFIX _cmcs_p)
-    include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
-    cmake_parse_arguments("${VAR_PREFIX}" "${PROJECT_OPTIONS}" "${PROJECT_ARGS}" "${PROJECT_MULTI_ARGS}" "${ARGN}")
+    #include("${CMAKE_CURRENT_LIST_FILE}/cmakecs_project_options.cmakecs" NO_POLICY_SCOPE)
+    cmake_parse_arguments("${VAR_PREFIX}" "${CMAKECS_PROJECT_OPTIONS}" "${CMAKECS_PROJECT_ARGS}" "${CMAKECS_PROJECT_MULTI_ARGS}" "${ARGN}")
     if(${VAR_PREFIX}_UNPARSED_ARGUMENTS AND NOT ${VAR_PREFIX}_EXTENDED_PACKAGES_INFO)
         cmcs_error_message("Unparsed arguments found in call to cmcs_init_project.\nUnparsed:${${VAR_PREFIX}_UNPARSED_ARGUMENTS}")
     endif()
@@ -89,7 +89,7 @@ macro(cmcs_project)
         # Check if previous project has been closed!
     endif()
 
-    foreach(_option IN LISTS PROJECT_OPTIONS PROJECT_ARGS PROJECT_MULTI_ARGS)
+    foreach(_option IN LISTS CMAKECS_PROJECT_OPTIONS CMAKECS_PROJECT_ARGS CMAKECS_PROJECT_MULTI_ARGS)
         unset(${VAR_PREFIX}_${_option})
     endforeach()
     unset(VAR_PREFIX)
@@ -97,7 +97,7 @@ macro(cmcs_project)
     cmcs_init_project(${ARGN})
 endmacro()
 
-function(cmcs_project_file _filename)
+macro(cmcs_project_file _filename)
     set(VAR_PREFIX _cmcs_pf)
     cmake_parse_arguments("${VAR_PREFIX}" "TOPLEVEL" "" "" ${ARGN})
     get_filename_component(${VAR_PREFIX}_filename_full_path "${_filename}" ABSOLUTE)
@@ -114,10 +114,11 @@ function(cmcs_project_file _filename)
         cmcs_project(${${VAR_PREFIX}_contents})
     endif()
 
+    unset(${VAR_PREFIX}_TOPLEVEL)
     unset(${VAR_PREFIX}_filename_full_path )
     unset(${VAR_PREFIX}_contents)
     unset(VAR_PREFIX)
-endfunction()
+endmacro()
 
 ## project() call overrie
 if(CMakeCS_ENABLE_PROJECT_OVERRIDE)

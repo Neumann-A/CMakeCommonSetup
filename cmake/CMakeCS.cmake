@@ -58,6 +58,7 @@ list(APPEND cmakecs_cmake_files
             sanetize_input
             create_config_files
             add_target
+            project_options
             project
             project_properties
             init_project
