@@ -3,7 +3,7 @@ function(cmcs_add_target)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" 
                                        "${CMAKECS_TARGET_OPTIONS}" 
                                        "${CMAKECS_TARGET_ARGS}" 
-                                       "${CMAKECS_PROJECT_MULTI_ARGS}")
+                                       "${CMAKECS_TARGET_MULTI_ARGS}")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION)
     
