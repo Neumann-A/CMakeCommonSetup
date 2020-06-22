@@ -57,6 +57,7 @@ list(APPEND cmakecs_cmake_files
             error_if_project_not_init
             sanetize_input
             create_config_files
+            target_options
             add_target
             project_options
             project
