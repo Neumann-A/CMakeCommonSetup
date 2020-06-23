@@ -3,9 +3,9 @@ TARGET_NAME
 LIBRARY_TYPE
     INTERFACE 
 INTERFACE_DEPENDS
-    $<$<COMPILE_LANG_AND_ID:C,MSVC>:CMakeCS::MSVC_CompilerWarnings>   
-    $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:CMakeCS::MSVC_CompilerWarnings>
-    $<$<COMPILE_LANG_AND_ID:C,GNU,AppleClang,Clang>:CMakeCS::Clang_GCC_CompilerWarnings>
-    $<$<COMPILE_LANG_AND_ID:CXX,GNU,AppleClang,Clang>:CMakeCS::Clang_GCC_CompilerWarnings>
-    $<$<COMPILE_LANG_AND_ID:C,Intel>:CMakeCS::Intel_CompilerWarnings>
-    $<$<COMPILE_LANG_AND_ID:CXX,Intel>:CMakeCS::Intel_CompilerWarnings>
+    $<$<COMPILE_LANG_AND_ID:C,MSVC>:$<TARGET_NAME:MSVC_CompilerWarnings>>   
+    $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:$<TARGET_NAME:MSVC_CompilerWarnings>>
+    $<$<COMPILE_LANG_AND_ID:C,GNU,AppleClang,Clang>:$<TARGET_NAME:Clang_GCC_CompilerWarnings>>
+    $<$<COMPILE_LANG_AND_ID:CXX,GNU,AppleClang,Clang>:$<TARGET_NAME:Clang_GCC_CompilerWarnings>>
+    $<$<COMPILE_LANG_AND_ID:C,Intel>:$<TARGET_NAME:Intel_CompilerWarnings>>
+    $<$<COMPILE_LANG_AND_ID:CXX,Intel>:$<TARGET_NAME:Intel_CompilerWarnings>>
