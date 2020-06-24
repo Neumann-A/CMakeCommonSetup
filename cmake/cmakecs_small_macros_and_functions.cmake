@@ -33,7 +33,7 @@ function(cmcs_define_global_property)
     cmcs_create_function_variable_prefix(_VAR_PREFIX)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "" "PROPERTY" "")
     cmcs_variable_exists_or_error(PREFIX "${_VAR_PREFIX}" VARIABLE_NAMES "PROPERTY")
-    message(STATUS "${${_VAR_PREFIX}_UNPARSED_ARGUMENTS}")
+    #cmake_print_variables(${_VAR_PREFIX}_UNPARSED_ARGUMENTS)
     define_property(GLOBAL PROPERTY _CMakeCS_${${_VAR_PREFIX}_PROPERTY} INHERITED ${${_VAR_PREFIX}_UNPARSED_ARGUMENTS})
 endfunction()
 

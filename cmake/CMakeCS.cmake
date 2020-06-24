@@ -19,14 +19,12 @@ include(GenerateExportHeader) # https://cmake.org/cmake/help/latest/module/Gener
 # Not applicable includes:
 #include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html (Requires prior project() call)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Enable folder layout as source layout in IDEs supporting it
 set_property(GLOBAL PROPERTY REPORT_UNDEFINED_PROPERTIES "${CMAKE_BINARY_DIR}/undef_properties.log")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  message(STATUS "CMAKE_INSTALL_PREFIX was not set. Setting default to ${CMAKE_BINARY_DIR}/install")
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation prefix" FORCE)
-else()
-  message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+  message(STATUS "[CMakeCS]: Detected defaulted CMAKE_INSTALL_PREFIX. Changing it to '${CMAKE_BINARY_DIR}/install'")
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation prefix")
 endif()
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON CACHE INTERNAL "Disable building in source directory." FORCE)
