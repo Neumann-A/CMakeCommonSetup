@@ -21,7 +21,6 @@ Common CMake scripts to setup projects, tests, dependencies (via package manager
 ```
 cmake_minimum_required (VERSION 3.17)
 set(CMakeCS_Dir <CMakeCS_Install_Directory> CACHE PATH "") # Cache variable so that it might be overwritten by the CMake command
-set(CMakeCS_ENABLE_PROJECT_OVERRIDE ON CACHE BOOL "") # To turn on the usage of project("${filename}")
 find_package(CMakeCS) # or include(<CMakeCS_Install_Directory>/cmake/CMakeCS.cmake)
 project(<filename>)
 ```
