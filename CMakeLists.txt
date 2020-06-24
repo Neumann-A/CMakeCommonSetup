@@ -20,7 +20,7 @@ set(CMakeCS_ENABLE_PROJECT_OVERRIDE ON CACHE BOOL "")
 
 set(CMAKE_MESSAGE_LOG_LEVEL TRACE CACHE STRING "CMake message log level (default: )")
 
-enable_language(CXX)
+#enable_language(CXX)
 include(cmake/CMakeCS.cmake)
 
 # This is ugly but will fire a CMake warning if the first project 

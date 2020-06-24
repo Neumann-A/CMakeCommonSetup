@@ -18,15 +18,15 @@
 # All info is getting stored in ${PROJECT_NAME}_<parametername>
 function(cmcs_init_project)
     message(TRACE "[CMakeCS cmcs_init_project]: ${ARGN}|${ARGC}")
-    include(CTest) # https://cmake.org/cmake/help/latest/module/CTest.html
-    include(CPack) # https://cmake.org/cmake/help/latest/module/CPack.html
+    include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+    if(BUILD_TESTING)
+        include(CTest) # https://cmake.org/cmake/help/latest/module/CTest.html
+    endif()
+    #include(CPack) # https://cmake.org/cmake/help/latest/module/CPack.html
     cmcs_create_function_variable_prefix(_FUNC_PREFIX)
-    message(TRACE: "PROJECT_NAME:${PROJECT_NAME}")
     set(_VAR_PREFIX "${_FUNC_PREFIX}_${PROJECT_NAME}")
-    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     #include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "${CMAKECS_PROJECT_OPTIONS}" "${CMAKECS_PROJECT_ARGS}" "${CMAKECS_PROJECT_MULTI_ARGS}")
-    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
     if(${PROJECT_NAME}_PARENT)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${PROJECT_NAME}_PARENT}${PROJECT_NAME})
@@ -171,20 +171,16 @@ function(cmcs_init_project)
         unset(_find_string)
     endforeach()
 
-    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     foreach(_subdir IN LISTS ${_VAR_PREFIX}_SUBDIRECTORIES)
         message(TRACE "Adding subdirectory ${_subdir} to project ${PROJECT_NAME}")
         add_subdirectory("${_subdir}")
     endforeach()
 
-    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
     foreach(_targetfile IN LISTS ${_VAR_PREFIX}_TARGET_FILES)
         message(TRACE "Reading target file ${_targetfile} for project ${PROJECT_NAME}")
         cmcs_read_target_file(${_targetfile})
     endforeach()
 
-    message(TRACE: "_VAR_PREFIX:${_VAR_PREFIX}")
-    message(STATUS "${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE:${${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE}")
     if(NOT ${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE)
         if(${_VAR_PREFIX}_CONFIG_WITH_MODULES)
             cmcs_create_config_files(SETUP_MODULE_PATH)

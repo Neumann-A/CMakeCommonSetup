@@ -80,7 +80,6 @@ macro(cmcs_project)
                 HOMEPAGE_URL ${${VAR_PREFIX}_HOMEPAGE_URL}
                 LANGUAGES ${${VAR_PREFIX}_LANGUAGES})
     endif()
-    include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
     if(CMAKE_PROJECT_NAME STREQUAL _PREVIOUS_CMAKE_PROJECT) # Same Top Level Project -> Child Project
         # Check if previous project has been closed 
         # -> If not it is a subcomponent of the project (new parent<->child)
