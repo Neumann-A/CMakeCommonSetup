@@ -22,6 +22,10 @@ include(GenerateExportHeader) # https://cmake.org/cmake/help/latest/module/Gener
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Enable folder layout as source layout in IDEs supporting it
 set_property(GLOBAL PROPERTY REPORT_UNDEFINED_PROPERTIES "${CMAKE_BINARY_DIR}/undef_properties.log")
 
+# Disable language extensions
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON CACHE INTERNAL "Disable building in source directory." FORCE)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON CACHE INTERNAL "Disable changes to sources" FORCE)
 set(GLOBAL_DEPENDS_NO_CYCLES ON CACHE INTERNAL "Disallow cyclic dependencies between all targets" FORCE)
