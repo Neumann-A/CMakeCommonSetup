@@ -192,9 +192,15 @@ function(cmcs_create_config_files)
         endif()
         string(APPEND _config_contents "                                  )\n")
         string(APPEND _config_contents "cmake_policy (POP)\n")
-        string(APPEND _config_contents "set_package_properties(\${CMAKE_FIND_PACKAGE_NAME} PROPERTIES\n"
-                                       "                       DESCRIPTION \"${PROJECT_HOMEPAGE_DESCRIPTION}\"\n"
-                                       "                       URL \"${PROJECT_HOMEPAGE_URL}\")\n")
+        if(${PROJECT_DESCRIPTION})
+            string(APPEND _config_contents "set_package_properties(\${CMAKE_FIND_PACKAGE_NAME} PROPERTIES\n"
+                                           "                       DESCRIPTION ${PROJECT_DESCRIPTION}\n")
+        endif()
+        if(${PROJECT_HOMEPAGE_URL})
+            string(APPEND _config_contents "set_package_properties(\${CMAKE_FIND_PACKAGE_NAME} PROPERTIES\n"
+                                           "                       URL ${PROJECT_HOMEPAGE_URL})\n")
+        endif()
+
         file(WRITE "${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Config.in.cmake" "${_config_contents}")
         set(${_VAR_PREFIX}_INPUT_FILE "${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Config.in.cmake")
     endif(NOT ${_VAR_PREFIX}_INPUT_FILE)
