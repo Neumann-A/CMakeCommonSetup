@@ -135,7 +135,7 @@ function(cmcs_read_target_file _filename)
 
     file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
     cmcs_sanetize_input(${VAR_PREFIX}_contents ${VAR_PREFIX}_contents) # Transforms everything into a list
-    string(CONFIGURE ${${VAR_PREFIX}_contents} ${VAR_PREFIX}_contents) # Expands CMake variables   
+    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables   
     message(TRACE "[CMakeCS] Target contents:${${VAR_PREFIX}_contents}")
     MESSAGE(STATUS "CONTENTS:${${VAR_PREFIX}_contents}")
 

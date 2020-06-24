@@ -107,7 +107,7 @@ macro(cmcs_project_file _filename)
 
     file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
     cmcs_sanetize_input(${VAR_PREFIX}_contents ${VAR_PREFIX}_contents) # Transforms everything into a list
-    string(CONFIGURE ${${VAR_PREFIX}_contents} ${VAR_PREFIX}_contents) # Expands CMake variables
+    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables
     message(STATUS "CONTENTS:${${VAR_PREFIX}_contents}")
     if(${VAR_PREFIX}_TOPLEVEL)
         cmcs_init_project(${${VAR_PREFIX}_contents}) 
