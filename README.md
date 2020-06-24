@@ -1,5 +1,5 @@
 # CMakeCommonSetup
-Common CMake scripts to setup projects, tests, dependencies (via package managers) and other stuff The aim of CMakeCS is to reduce the mental burden to setup CMake projects by providing a declarative project/target setup which automatically deals with correctly exporting and installing targets without too much effort. It can be used either from a build, install or even droped into your project. The recommended way to use CMakeCS is to install it and use `find_package(CMakeCS)` with `CMakeCS_Dir` set to the directory containing the installed `CMakeCSConfig.cmake` file.   
+Common CMake scripts to setup projects, tests, dependencies (via package managers) and other stuff The aim of CMakeCS is to reduce the mental burden to setup CMake projects by providing a declarative project/target setup which automatically deals with correctly exporting and installing targets without too much effort. It can be used either from a build, install or even droped into your project. The recommended way to use CMakeCS is to install it and use `find_package(CMakeCS)` with `CMakeCS_DIR` set to the directory containing the installed `CMakeCSConfig.cmake` file.   
 
 ### Key features
  - declarative project/target setup (similar to VTKs new module system)
@@ -19,10 +19,10 @@ Common CMake scripts to setup projects, tests, dependencies (via package manager
  - The project itself uses CMakeCS, so you can directly inspect the `CMakeLists.txt` to get and idea 
  - The minimal example is:
 ```
-cmake_minimum_required (VERSION 3.17)
-set(CMakeCS_Dir <CMakeCS_Install_Directory> CACHE PATH "") # Cache variable so that it might be overwritten by the CMake command
-find_package(CMakeCS) # or include(<CMakeCS_Install_Directory>/cmake/CMakeCS.cmake)
-project(<filename>)
+    cmake_minimum_required (VERSION 3.17)
+    set(CMakeCS_Dir <CMakeCS_Install_Directory> CACHE PATH "") # Cache variable so that it might be overwritten by the CMake command
+    find_package(CMakeCS) # or include(<CMakeCS_Install_Directory>/cmake/CMakeCS.cmake)
+    project(<filename>)
 ```
 `"<filename>"` is a CMakeCS project description file. You can look into `Project.CMakeCS.cmakecs` to get an idea how it works 
  - TODO: More examples

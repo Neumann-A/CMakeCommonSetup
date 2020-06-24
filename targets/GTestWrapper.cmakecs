@@ -1,7 +1,9 @@
 TARGET_NAME
     GTestWrapper
 LIBRARY_TYPE
-    INTERFACE 
+    INTERFACE
+CONDITION
+    CMakeCS_ENABLE_GTest
 INTERFACE_DEPENDS 
     GTest::gtest
     GTest::gtest_main

@@ -16,7 +16,8 @@ set(CMAKECS_TARGET_MULTI_ARGS "PUBLIC_SOURCES;PRIVATE_SOURCES;INTERFACE_SOURCES;
                               "PUBLIC_LINK_OPTIONS;PRIVATE_LINK_OPTIONS;INTERFACE_LINK_OPTIONS"
                               "PUBLIC_PRECOMPILE_HEADERS;PRIVATE_PRECOMPILE_HEADERS;INTERFACE_PRECOMPILE_HEADERS"
                               "REUSE_PRECOMPILE_HEADERS_FROM_TARGETS"
-                              "PROPERTIES"
+                              "PROPERTIES" # same as set_properties(TARGET PROPERTIES <args>)
+                              "CONDITION" # Condition for which the target is generated
                               "TARGET_OPTIONS_FILE;EXPORTED_OPTIONS" # List of variables which gets added as a custom property to the target (TODO: not yet implemented)
                               "HEADERS;HEADER_DIRECTORIES_TO_INSTALL" CACHE INTERNAL "")
 

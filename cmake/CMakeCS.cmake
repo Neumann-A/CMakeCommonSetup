@@ -22,11 +22,6 @@ include(GenerateExportHeader) # https://cmake.org/cmake/help/latest/module/Gener
 set_property(GLOBAL PROPERTY USE_FOLDERS ON) # Enable folder layout as source layout in IDEs supporting it
 set_property(GLOBAL PROPERTY REPORT_UNDEFINED_PROPERTIES "${CMAKE_BINARY_DIR}/undef_properties.log")
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  message(STATUS "[CMakeCS]: Detected defaulted CMAKE_INSTALL_PREFIX. Changing it to '${CMAKE_BINARY_DIR}/install'")
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation prefix")
-endif()
-
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON CACHE INTERNAL "Disable building in source directory." FORCE)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON CACHE INTERNAL "Disable changes to sources" FORCE)
 set(GLOBAL_DEPENDS_NO_CYCLES ON CACHE INTERNAL "Disallow cyclic dependencies between all targets" FORCE)
@@ -40,8 +35,15 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   message(${CMakeCS_MSG_ERROR_TYPE} "In-source builds are not allowed.")
 endif ()
 
-option(CMakeCS_ENABLE_PROJECT_OVERRIDE "Enable override of the cmake function project with the one from CMakeCS (default:ON)" ON)
+option(CMakeCS_ENABLE_PROJECT_OVERRIDE "Enable override of the cmake function project() with the one from CMakeCS (default:ON)" ON)
 CMAKE_DEPENDENT_OPTION(CMakeCS_USE_PROJECT_OVERRIDE "Use the project() override in the project call" ON "CMakeCS_ENABLE_PROJECT_OVERRIDE" OFF)
+#option(CMakeCS_ENABLE_OPTION_OVERRIDE "Enable override of the cmake function option() with the one from CMakeCS to register options in CMakeCS (default:ON)" ON)
+#CMAKE_DEPENDENT_OPTION(CMakeCS_USE_OPTION_OVERRIDE "Use the option() override in the option call" ON "CMakeCS_ENABLE_OPTION_OVERRIDE" OFF)
+option(CMakeCS_ENABLE_PACKAGE_FEATURE_SUMMARY "Enable automatic listing of optional packages enable variable in feature summary (default:ON)" ON)
+
+mark_as_advanced(CMakeCS_ENABLE_PROJECT_OVERRIDE 
+                 CMakeCS_USE_PROJECT_OVERRIDE 
+                 CMakeCS_ENABLE_PACKAGE_FEATURE_SUMMARY)
 
 # Reset global variables. 
 set(CMakeCS_ALL_PROJECTS "" CACHE INTERNAL "List of all projects")

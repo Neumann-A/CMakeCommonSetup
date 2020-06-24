@@ -7,6 +7,12 @@ function(cmcs_add_target)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION)
     
+    if(${_VAR_PREFIX}_CONDITION)
+        if(NOT ${${_VAR_PREFIX}_CONDITION})
+            return()
+        endif()
+    endif()
+
     if(${_VAR_PREFIX}_AUTO_GLOB_SOURCE) 
         file(GLOB_RECURSE ${_VAR_PREFIX}_SOURCES CONFIGURE_DEPENDS "src/*")
     endif()

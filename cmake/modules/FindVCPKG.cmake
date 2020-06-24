@@ -2,7 +2,7 @@
 ## VCPKG_ROOT searched in ${CMAKE_(SOURCE|BINARY)_DIR}(/..|/../..)/vcpkg, variable VCPKG_HINTS and environment VCPKG_ROOT
 ## VCPKG_TARGET_TRIPLET if not set by the user
 
-
+include(FeatureSummary)
 include(CMakePrintHelpers)
 option(USE_VCPKG_TOOLCHAIN "Use VCPKG toolchain; Switching this option requires a clean reconfigure" ON) 
 
@@ -42,3 +42,7 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(VCPKG REQUIRED_VARS "VCPKG_INSTALLED_DIR;VCPKG_ROOT;VCPKG_TARGET_TRIPLET")
+
+set_package_properties(VCPKG PROPERTIES
+                             DESCRIPTION "C++ Library Manager for Windows, Linux, and MacOS "
+                             URL "https://github.com/microsoft/vcpkg")

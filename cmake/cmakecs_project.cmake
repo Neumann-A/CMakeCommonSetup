@@ -34,6 +34,13 @@ macro(cmcs_project)
         set(_PREVIOUS_LOCKED FALSE)
     endif()
 
+    if(${VAR_PREFIX}_OPTIONS_FILE)
+        if(NOT ${VAR_PREFIX}_OPTIONS)
+            cmcs_error_message("${${VAR_PREFIX}_PROJECT_NAME} uses OPTIONS_FILE without specificing the options via OPTIONS")
+        endif()
+        cmcs_read_option_file()
+    elseif(${VAR_PREFIX}_OPTIONS)
+    endif()
 
     if(_PREVIOUS_LOCKED) 
         # Previous project is closed so this is a new project on the same level as the previous project

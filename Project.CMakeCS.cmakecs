@@ -16,10 +16,21 @@ LANGUAGES
 PUBLIC_CMAKE_DIRS
     cmake/
 CONFIG_WITH_MODULES
-MODULES_TO_INCLUDE
+#OPTIONS
+#    WITH_GTestWrapper # TODO: Will probably not be implemented due to a missing good way to specify description/purpose
+EXPORTED_VARIABLES
+    WITH_GTestWrapper
+    WITH_MYFEAT1
+MODULES_TO_INCLUDE # this file will be included in the generated config
     CMakeCS
-REQUIRED_PACKAGES
+PUBLIC_MODULE_DIRECTORIES # TODO
+    cmake/modules
+# REQUIRED_PACKAGES
+#     GTest
+OPTIONAL_PACKAGES
     GTest
+# OPTIONAL_CONDITIONAL_PACKAGES # Allows control over the used variable name. If this is not required use (REQUIRED|OPTIONAL)_PACKAGES 
+#     GTest
 TARGET_FILES
    targets/Clang_GCC_CompilerWarnings.cmakecs
    targets/Intel_CompilerWarnings.cmakecs
@@ -30,3 +41,7 @@ TARGET_FILES
 EXTENDED_PACKAGES_INFO # Parse blocker for dynamic/unknown options. 
 GTest_FIND_OPTIONS
     CONFIG
+GTest_PURPOSE
+    "- Used for wrapper target CMakeCS::GTestWrapper"
+# GTest_CONDITION # Only used by OPTIONAL_CONDITIONAL_PACKAGES as the condition for the package
+#    WITH_GTestWrapper
