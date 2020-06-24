@@ -19,7 +19,7 @@ CONFIG_WITH_MODULES
 #OPTIONS
 #    WITH_GTestWrapper # TODO: Will probably not be implemented due to a missing good way to specify description/purpose
 EXPORTED_VARIABLES
-    WITH_GTestWrapper
+    CMakeCS_ENABLE_GTest
     WITH_MYFEAT1
 MODULES_TO_INCLUDE # this file will be included in the generated config
     CMakeCS
