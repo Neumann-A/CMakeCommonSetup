@@ -42,7 +42,7 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   message(${CMakeCS_MSG_ERROR_TYPE} "In-source builds are not allowed.")
 endif ()
 
-option(CMakeCS_ENABLE_PROJECT_OVERRIDE "Enable override of the cmake function project with the one from CMakeCS (default:OFF)" OFF)
+option(CMakeCS_ENABLE_PROJECT_OVERRIDE "Enable override of the cmake function project with the one from CMakeCS (default:ON)" ON)
 CMAKE_DEPENDENT_OPTION(CMakeCS_USE_PROJECT_OVERRIDE "Use the project() override in the project call" ON "CMakeCS_ENABLE_PROJECT_OVERRIDE" OFF)
 
 # Reset global variables. 
