@@ -44,23 +44,28 @@ macro(cmcs_project)
 
         if(_PREVIOUS_LOCKED) 
             # Previous project is closed so this is a new project on the same level as the previous project
-            if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) # Not toplevel project
+            if(PROJECT_NAME) # Not toplevel project
                 # The previos project was closed so get the parent of that project
                 # and set it as the parent of the new project
                 cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
-                set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${${PROJECT_NAME}_PARENT})
-                cmcs_set_global_property(PREFIX ${VAR_PREFIX} PROPERTY ${${VAR_PREFIX}_PROJECT_NAME}_PARENT)
+                if(${PROJECT_NAME}_PARENT)
+                    set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${${PROJECT_NAME}_PARENT})
+                    cmcs_set_global_property(PREFIX ${VAR_PREFIX} PROPERTY ${${VAR_PREFIX}_PROJECT_NAME}_PARENT)
 
-                # Add the new project as a child to the previous project parent childs
-                set(${${PROJECT_NAME}_PARENT}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
-                cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${${PROJECT_NAME}_PARENT}_CHILD)          
+                    # Add the new project as a child to the previous project parent childs
+                    set(${${PROJECT_NAME}_PARENT}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
+                    cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${${PROJECT_NAME}_PARENT}_CHILD)
+                endif()
             else()
                 # No Parent. Is toplevel project. 
             endif()
         else()
-            if(NOT CMAKE_PROJECT_NAME) 
-                # First toplevel project
-            elseif(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR) # Not toplevel source dir
+            #cmake_print_variables(CMAKE_PROJECT_NAME PROJECT_NAME ${VAR_PREFIX}_PROJECT_NAME CMAKE_PARENT_LIST_FILE)
+            if(NOT PROJECT_NAME) 
+                # 1. Toplevel project since PROJECT_NAME is not set
+                # CMAKE_PROJECT_NAME does not work since it will be set after first configure. 
+            elseif(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR) 
+                # Not toplevel source dir
                 # Project is not locked so the new project is a subproject of the current. 
                 set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${PROJECT_NAME})
                 set(${PROJECT_NAME}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
@@ -70,7 +75,7 @@ macro(cmcs_project)
                 set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${PROJECT_NAME})
                 cmcs_set_global_property(PREFIX ${VAR_PREFIX} PROPERTY ${${VAR_PREFIX}_PROJECT_NAME}_PARENT)
             else()
-                cmcs_error_message("Cannot create a new top level project called ${${VAR_PREFIX}_PROJECT_NAME} unless the previous toplevel project called  ${PROJECT_NAME} is finalized using cmcs_finalize_project!")
+                cmcs_error_message("Cannot create a new top level project called ${${VAR_PREFIX}_PROJECT_NAME} unless the previous toplevel project called ${PROJECT_NAME} is finalized using cmcs_finalize_project!")
             endif()
         endif()
 
@@ -87,6 +92,7 @@ macro(cmcs_project)
         if(${VAR_PREFIX}_LANGUAGES)
             list(APPEND PROJECT_PARAMS LANGUAGES ${${VAR_PREFIX}_LANGUAGES})
         endif()
+
         if(NOT CMakeCS_ENABLE_PROJECT_OVERRIDE)
             message(TRACE "[CMakeCS]: Using project()")
             project(${PROJECT_PARAMS})
