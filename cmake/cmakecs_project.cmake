@@ -58,8 +58,9 @@ macro(cmcs_project)
                 # No Parent. Is toplevel project. 
             endif()
         else()
-            if(NOT CMAKE_PROJECT_NAME) # First toplevel project
-            elseif(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) # Not toplevel 
+            if(NOT CMAKE_PROJECT_NAME) 
+                # First toplevel project
+            elseif(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR) # Not toplevel source dir
                 # Project is not locked so the new project is a subproject of the current. 
                 set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${PROJECT_NAME})
                 set(${PROJECT_NAME}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
@@ -73,21 +74,27 @@ macro(cmcs_project)
             endif()
         endif()
 
+        set(PROJECT_PARAMS ${${VAR_PREFIX}_PROJECT_NAME})
+        if(${VAR_PREFIX}_VERSION)
+            list(APPEND PROJECT_PARAMS VERSION ${${VAR_PREFIX}_VERSION})
+        endif()
+        if(${VAR_PREFIX}_DESCRIPTION)
+            list(APPEND PROJECT_PARAMS DESCRIPTION ${${VAR_PREFIX}_DESCRIPTION})
+        endif()
+        if(${VAR_PREFIX}_HOMEPAGE_URL)
+            list(APPEND PROJECT_PARAMS HOMEPAGE_URL ${${VAR_PREFIX}_HOMEPAGE_URL})
+        endif()
+        if(${VAR_PREFIX}_LANGUAGES)
+            list(APPEND PROJECT_PARAMS LANGUAGES ${${VAR_PREFIX}_LANGUAGES})
+        endif()
         if(NOT CMakeCS_ENABLE_PROJECT_OVERRIDE)
             message(TRACE "[CMakeCS]: Using project()")
-            project(${${VAR_PREFIX}_PROJECT_NAME}
-                    VERSION ${${VAR_PREFIX}_VERSION}
-                    DESCRIPTION ${${VAR_PREFIX}_DESCRIPTION}
-                    HOMEPAGE_URL ${${VAR_PREFIX}_HOMEPAGE_URL}
-                    LANGUAGES ${${VAR_PREFIX}_LANGUAGES})
+            project(${PROJECT_PARAMS})
         else()
             message(TRACE "[CMakeCS]: Using _project()")
-            _project(${${VAR_PREFIX}_PROJECT_NAME}
-                    VERSION ${${VAR_PREFIX}_VERSION}
-                    DESCRIPTION ${${VAR_PREFIX}_DESCRIPTION}
-                    HOMEPAGE_URL ${${VAR_PREFIX}_HOMEPAGE_URL}
-                    LANGUAGES ${${VAR_PREFIX}_LANGUAGES})
+            _project(${PROJECT_PARAMS})
         endif()
+        unset(PROJECT_PARAMS)
         if(CMAKE_PROJECT_NAME STREQUAL _PREVIOUS_CMAKE_PROJECT) # Same Top Level Project -> Child Project
             # Check if previous project has been closed 
             # -> If not it is a subcomponent of the project (new parent<->child)

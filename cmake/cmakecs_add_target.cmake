@@ -104,17 +104,26 @@ function(cmcs_add_target)
 
     if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
-        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}>)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INCLUDE_INSTALL_DIR)
+        if(${${_VAR_PREFIX}_LIBRARY_TYPE} MATCHES "INTERFACE")
+            set(_INC_ACCESS INTERFACE)
+        else()
+            set(_INC_ACCESS PUBLIC)
+        endif()
+
         foreach(_headerdir IN LISTS ${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
             if(IS_ABSOLUTE "${_headerdir}")
-                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${_headerdir}>)
+                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${_headerdir}>)
             else()
-                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${_headerdir}>
-                                                                                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURE_DIR}/${_headerdir}>)
+                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${_headerdir}>
+                                                                                        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURE_DIR}/${_headerdir}>)
             endif()
         endforeach()
-        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} COMPONENT Development)
 
+        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<INSTALL_INTERFACE:${${PROJECT_NAME}_INCLUDE_INSTALL_DIR}>)
+        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION ${${PROJECT_NAME}_INCLUDE_INSTALL_DIR} COMPONENT Development)
+
+        unset(_INC_ACCESS)
     endif()
 
     if(NOT ${_VAR_PREFIX}_NO_TARGET_EXPORT)     
@@ -126,7 +135,7 @@ function(cmcs_add_target)
                 RUNTIME DESTINATION bin COMPONENT Runtime
                 LIBRARY DESTINATION lib COMPONENT Development
                 ARCHIVE DESTINATION lib COMPONENT Development
-                PUBLIC_HEADER DESTINATION include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION} COMPONENT Development)
+                PUBLIC_HEADER DESTINATION ${${PROJECT_NAME}_INCLUDE_INSTALL_DIR} COMPONENT Development)
     endif()
 
     set(${PROJECT_NAME}_PROJECT_TARGETS ${${PROJECT_NAME}_PROJECT_TARGETS} ${${_VAR_PREFIX}_TARGET_NAME} CACHE INTERNAL "")
