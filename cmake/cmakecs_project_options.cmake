@@ -9,6 +9,7 @@ set(CMAKECS_PROJECT_ARGS "PROJECT_NAME;VERSION;HOMEPAGE_URL;DESCRIPTION"
                          "OPTION_FILE" # TODO
                          "PUBLIC_MODULE_DIRECTORIES" #TODO 
                          "INSTALL_INCLUDEDIR"
+                         "USAGE_INCLUDEDIR"
                          CACHE INTERNAL "")
 set(CMAKECS_PROJECT_MULTI_ARGS "LANGUAGES"
                                "REQUIRED_PACKAGES;OPTIONAL_PACKAGES;OPTIONAL_CONDITIONAL_PACKAGES"
