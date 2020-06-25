@@ -17,6 +17,7 @@ set(CMAKECS_PROJECT_MULTI_ARGS "LANGUAGES"
                                "SUBDIRECTORIES"
                                "TARGET_FILES"
                                "EXPORTED_VARIABLES" # These variables will be exported in the config 
+                               "CONDITION" # Condition for which the project is loaded"
                                 CACHE INTERNAL "")
 
 ## Additional options for every package after EXTENDED_PACKAGES_INFO:
