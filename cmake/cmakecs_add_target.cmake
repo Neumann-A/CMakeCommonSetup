@@ -104,7 +104,7 @@ function(cmcs_add_target)
 
     if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
-        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INCLUDE_INSTALLDIR)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
         if(${${_VAR_PREFIX}_LIBRARY_TYPE} MATCHES "INTERFACE")
             set(_INC_ACCESS INTERFACE)
         else()
@@ -120,8 +120,8 @@ function(cmcs_add_target)
             endif()
         endforeach()
 
-        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<INSTALL_INTERFACE:${${PROJECT_NAME}_INCLUDE_INSTALLDIR}>)
-        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION ${${PROJECT_NAME}_INCLUDE_INSTALLDIR} COMPONENT Development)
+        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<INSTALL_INTERFACE:${${PROJECT_NAME}_INSTALL_INCLUDEDIR}>)
+        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION ${${PROJECT_NAME}_INSTALL_INCLUDEDIR} COMPONENT Development)
 
         unset(_INC_ACCESS)
     endif()
@@ -135,7 +135,7 @@ function(cmcs_add_target)
                 RUNTIME DESTINATION bin COMPONENT Runtime
                 LIBRARY DESTINATION lib COMPONENT Development
                 ARCHIVE DESTINATION lib COMPONENT Development
-                PUBLIC_HEADER DESTINATION ${${PROJECT_NAME}_INCLUDE_INSTALLDIR} COMPONENT Development)
+                PUBLIC_HEADER DESTINATION ${${PROJECT_NAME}_INSTALL_INCLUDEDIR} COMPONENT Development)
     endif()
 
     set(${PROJECT_NAME}_PROJECT_TARGETS ${${PROJECT_NAME}_PROJECT_TARGETS} ${${_VAR_PREFIX}_TARGET_NAME} CACHE INTERNAL "")
