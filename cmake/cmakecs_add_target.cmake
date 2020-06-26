@@ -86,6 +86,9 @@ function(cmcs_add_target)
         if(${_VAR_PREFIX}_${_dep}_PRECOMPILE_HEADERS)
             target_precompile_headers(${${_VAR_PREFIX}_TARGET_NAME} ${_dep} ${${_VAR_PREFIX}_${_dep}_PRECOMPILE_HEADERS})
         endif()
+        if(${_VAR_PREFIX}_${_dep}_HEADER)
+            set_property(TARGET ${${_VAR_PREFIX}_TARGET_NAME} APPEND PROPERTY ${_dep}_HEADER ${${_VAR_PREFIX}_${_dep}_HEADER})
+        endif()
     endforeach()
 
     if(${_VAR_PREFIX}_REUSE_PRECOMPILE_HEADERS_FROM_TARGETS)
@@ -102,7 +105,7 @@ function(cmcs_add_target)
 
     #target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}>)
 
-    if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
+    if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL OR ${_VAR_PREFIX}_PUBLIC_HEADERS)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
