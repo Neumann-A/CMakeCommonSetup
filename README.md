@@ -11,7 +11,8 @@ Common CMake scripts to setup projects, tests, dependencies (via package manager
 
 ### Future possible features
  - vendoring third party (CMake) dependencies with automatic addition of `<package_prefix>` to the library name to avoid conflicts. (VTK style) 
-
+ - adding pkgconfig files for generated libs. 
+ 
 ### Features to probably never to be included
  - automatic download of third party dependencies. 3rd party dependencies should be handled by a package manager and not by the build system itself
 
