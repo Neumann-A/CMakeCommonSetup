@@ -2,6 +2,7 @@ set(CMAKECS_TARGET_OPTIONS "EXECUTABLE"
                            "NO_TARGET_EXPORT"
                            "AUTO_GLOB_SOURCE;AUTO_GLOB_INCLUDE"
                            "GENERATE_EXPORT_HEADER" 
+                           "IDE_INTERFACE_TARGET" # Generate a IDE target for INTERFACE libraries
                            CACHE INTERNAL "")
 set(CMAKECS_TARGET_ARGS "TARGET_NAME;LIBRARY_TYPE;EXECUTABLE_TYPE" 
                         CACHE INTERNAL "")
