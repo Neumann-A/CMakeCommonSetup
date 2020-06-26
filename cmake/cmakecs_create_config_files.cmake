@@ -173,7 +173,6 @@ function(cmcs_create_config_files)
             string(APPEND _config_contents "check_required_components(${PROJECT_NAME})\n")           
         endif(${PROJECT_NAME}_CHILDS)
 
-
         string(APPEND _config_contents "\n # Finish up \n")
         string(APPEND _config_contents "include(\${CMAKE_CURRENT_LIST_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake)\n")
         if(${_VAR_PREFIX}_SETUP_MODULE_PATH)
@@ -238,15 +237,20 @@ function(cmcs_create_config_files)
 
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_VERSION_COMPATIBILITY)
-    write_basic_package_version_file("${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}ConfigVersion.cmake"
-                                     VERSION ${${PROJECT_NAME}_VERSION} 
-                                     COMPATIBILITY ${${PROJECT_NAME}_VERSION_COMPATIBILITY})
+    if(${PROJECT_NAME}_VERSION AND ${PROJECT_NAME}_VERSION_COMPATIBILITY)
+        write_basic_package_version_file("${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}ConfigVersion.cmake"
+                                        VERSION ${${PROJECT_NAME}_VERSION} 
+                                        COMPATIBILITY ${${PROJECT_NAME}_VERSION_COMPATIBILITY})
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}ConfigVersion.cmake"
+                                        DESTINATION "${${_VAR_PREFIX}_INSTALL_DESTINATION}" )
+    elseif(${PROJECT_NAME}_VERSION OR ${PROJECT_NAME}_VERSION_COMPATIBILITY)
+        cmcs_error_message("Cannot define VERSION or VERSION_COMPATIBILITY without setting both!")
+    endif()
                                      
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}Config.install.cmake"
             DESTINATION "${${_VAR_PREFIX}_INSTALL_DESTINATION}"
             RENAME "${${PROJECT_NAME}_PACKAGE_NAME}Config.cmake")                               
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INSTALL_DESTINATION}/${${PROJECT_NAME}_PACKAGE_NAME}ConfigVersion.cmake"
-            DESTINATION "${${_VAR_PREFIX}_INSTALL_DESTINATION}" )
+
 
     if(${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
         install(FILES "${${PROJECT_NAME}_PUBLIC_CMAKE_FILES}"
