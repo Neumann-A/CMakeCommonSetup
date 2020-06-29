@@ -117,10 +117,9 @@ function(cmcs_add_target)
     endif()
 
     #target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}>)
-
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
     if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL OR ${_VAR_PREFIX}_PUBLIC_HEADERS)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
-        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
