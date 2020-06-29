@@ -47,10 +47,6 @@ function(cmcs_add_target)
         endif()
     endif()
 
-
-
-
-
     if(${_VAR_PREFIX}_GENERATE_EXPORT_HEADER)        
         generate_export_header(${${_VAR_PREFIX}_TARGET_NAME} BASE_NAME ${BASE_NAME}) 
         # PREFIX_NAME 
@@ -136,18 +132,20 @@ function(cmcs_add_target)
 
     #target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PUBLIC $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}>)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
+
+    if(${PROJECT_NAME}_BUILD_INCLUDEDIR AND NOT ${_VAR_PREFIX}_LIBRARY_TYPE MATCHES "INTERFACE")
+        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${${PROJECT_NAME}_BUILD_INCLUDEDIR}>)
+    endif()
+
     if(${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL OR ${_VAR_PREFIX}_PUBLIC_HEADER)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
-        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
         
         if(${${_VAR_PREFIX}_LIBRARY_TYPE} MATCHES "INTERFACE")
             set(_INC_ACCESS INTERFACE)
         else()
             set(_INC_ACCESS PUBLIC)
-            if(${PROJECT_NAME}_USAGE_INCLUDEDIR)
-                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} PRIVATE $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_USAGE_INCLUDEDIR}>)
-            endif()
         endif()
 
         foreach(_headerdir IN LISTS ${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
@@ -156,13 +154,13 @@ function(cmcs_add_target)
             if(IS_ABSOLUTE "${_headerdir}")
                 target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${_headerdir}>)
                 if(${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
-                    file(CREATE_LINK "${_headerdir}" "${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_INSTALL_INCLUDEDIR}/" SYMBOLIC)
+                    file(CREATE_LINK "${_headerdir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/" SYMBOLIC)
                 endif()
             else()
                 target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${_headerdir}>
                                                                                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURE_DIR}/${_headerdir}>)
                 if(${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
-                    file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_headerdir}" "${CMAKE_BINARY_DIR}/${${PROJECT_NAME}_INSTALL_INCLUDEDIR}/" SYMBOLIC)
+                    file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_headerdir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/" SYMBOLIC)
                 endif()
             endif()
         endforeach()
@@ -170,12 +168,8 @@ function(cmcs_add_target)
         if(${PROJECT_NAME}_USAGE_INCLUDEDIR)
             target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<INSTALL_INTERFACE:${${PROJECT_NAME}_USAGE_INCLUDEDIR}>)            
         endif()
-        if(${PROJECT_NAME}_BUILD_INCLUDEDIR)
-            target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${${PROJECT_NAME}_BUILD_INCLUDEDIR}>)
-        endif()
-        cmake_print_variables(${PROJECT_NAME}_BUILD_INCLUDEDIR)
-        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION ${${PROJECT_NAME}_INSTALL_INCLUDEDIR} COMPONENT Development)
 
+        install(DIRECTORY ${${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL} DESTINATION ${${PROJECT_NAME}_INSTALL_INCLUDEDIR} COMPONENT Development)
         unset(_INC_ACCESS)
     endif()
 
