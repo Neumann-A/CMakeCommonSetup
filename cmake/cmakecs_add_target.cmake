@@ -148,8 +148,8 @@ function(cmcs_add_target)
             set(_INC_ACCESS PUBLIC)
         endif()
 
-        file(REMOVE_RECURSE "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}")
-        file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}/..")
+        file(REMOVE_RECURSE "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}") # Remove a possible build include dir
+        file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}") # Create the subfolder if required
 
         foreach(_headerdir IN LISTS ${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
             if(IS_ABSOLUTE "${_headerdir}")
@@ -194,7 +194,7 @@ function(cmcs_add_target)
             endforeach()
             unset(_current_dir)
             #cmake_print_variables(_root_headerdirs)
-            foreach(_root_dir IN LISTS _root_headerdirs)                
+            foreach(_root_dir IN LISTS _root_headerdirs)
                 file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_root_dir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}" SYMBOLIC)
             endforeach()
         endif()
@@ -231,7 +231,7 @@ function(cmcs_read_target_file _filename)
     #message(VERBOSE "[CMakeCS]: Loading target file:${${VAR_PREFIX}_filename_full_path}")
     file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
     cmcs_sanetize_input(${VAR_PREFIX}_contents ${VAR_PREFIX}_contents) # Transforms everything into a list
-    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables   
+    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables
     message(TRACE "[CMakeCS]: Target contents:${${VAR_PREFIX}_contents}")
     cmcs_add_target(${${VAR_PREFIX}_contents})
 endfunction()
