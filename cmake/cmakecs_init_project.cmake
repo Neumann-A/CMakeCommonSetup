@@ -35,7 +35,7 @@ function(cmcs_init_project)
 
     if(${PROJECT_NAME}_PARENT)
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_PACKAGE_NAME)
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${${PROJECT_NAME}_PARENT}_PACKAGE_NAME}${PROJECT_NAME})
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${${PROJECT_NAME}_PARENT}_PACKAGE_NAME}_${PROJECT_NAME})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_NAMESPACE)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${${PROJECT_NAME}_PARENT}_NAMESPACE})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_INSTALL_INCLUDEDIR)
