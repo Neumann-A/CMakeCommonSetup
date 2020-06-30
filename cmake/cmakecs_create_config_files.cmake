@@ -168,7 +168,7 @@ function(cmcs_create_config_files)
             string(APPEND _config_contents "set(\${CMAKE_FIND_PACKAGE_NAME}_AVAILABLE_COMPONENTS ${${PROJECT_NAME}_CHILDS})\n")
             foreach(_component IN LISTS ${PROJECT_NAME}_CHILDS)
                 cmcs_get_global_property(PROPERTY ${_component}_CHILDS)
-                string(APPEND _config_contents "find_dependency(${${PROJECT_NAME}_PACKAGE_NAME}_${_component}\n"
+                string(APPEND _config_contents "find_dependency(${${PROJECT_NAME}_PACKAGE_NAME}_${_component}\n")
                 string(APPEND _config_contents "                PATH_SUFFIXES components\n")
                 if(${_component}_CHILDS)
                     string(APPEND _config_contents "                COMPONENTS ${${_component}_CHILDS}\n")
