@@ -11,6 +11,7 @@ function(cmcs_finalize_project)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORTED_TARGETS)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
 
     message(VERBOSE "[CMakeCS] '${${PROJECT_NAME}_PACKAGE_NAME}': Finalizing project")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_CHILDS)
@@ -51,7 +52,8 @@ function(cmcs_finalize_project)
         install(EXPORT ${${PROJECT_NAME}_EXPORT_NAME}
                 NAMESPACE ${${PROJECT_NAME}_NAMESPACE}:: 
                 FILE ${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake 
-                DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${${PROJECT_NAME}_PACKAGE_NAME}")
+                DESTINATION "${${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION}")
+                
     endif()
 
     # Alias all exported targets into the namespace ${PROJECT_NAME}_PACKAGE_NAME 
