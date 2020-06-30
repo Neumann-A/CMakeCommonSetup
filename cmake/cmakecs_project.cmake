@@ -55,19 +55,27 @@ macro(cmcs_project)
                     # Add the new project as a child to the previous project parent childs
                     set(${${PROJECT_NAME}_PARENT}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
                     cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${${PROJECT_NAME}_PARENT}_CHILD)
+                    message(VERBOSE "[CMakeCS]: Creating project:'${${VAR_PREFIX}_PROJECT_NAME}' as child of:'${${PROJECT_NAME}_PARENT}'")
+                else()
+                    message(VERBOSE "[CMakeCS]: Creating project without parent:'${${VAR_PREFIX}_PROJECT_NAME}'")
                 endif()
             else()
                 # No Parent. Is toplevel project. 
+                message(VERBOSE "[CMakeCS]: Creating toplevel project (previous locked):'${${VAR_PREFIX}_PROJECT_NAME}'")
             endif()
         else()
             #cmake_print_variables(CMAKE_PROJECT_NAME PROJECT_NAME ${VAR_PREFIX}_PROJECT_NAME CMAKE_PARENT_LIST_FILE)
             if(NOT PROJECT_NAME) 
                 # 1. Toplevel project since PROJECT_NAME is not set
                 # CMAKE_PROJECT_NAME does not work since it will be set after first configure. 
+                message(VERBOSE "[CMakeCS]: Creating toplevel project: ${${VAR_PREFIX}_PROJECT_NAME}")
+                #set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT "")
+                #cmcs_set_global_property(PREFIX ${VAR_PREFIX} PROPERTY ${${VAR_PREFIX}_PROJECT_NAME}_PARENT)
             elseif(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR) 
                 # Not toplevel source dir
                 # Project is not locked so the new project is a subproject of the current. 
-                set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${PROJECT_NAME})
+                message(VERBOSE "[CMakeCS]: Creating project:'${${VAR_PREFIX}_PROJECT_NAME}' as child of:'${PROJECT_NAME}'")
+
                 set(${PROJECT_NAME}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
                 cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${PROJECT_NAME}_CHILD)
 

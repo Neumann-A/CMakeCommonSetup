@@ -65,7 +65,7 @@ function(cmcs_init_project)
             cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
         endif()
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${${_VAR_PREFIX}_INSTALL_INCLUDEDIR}/..")
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}")
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR DEFAULT "FALSE")
     endif()
     
@@ -105,8 +105,10 @@ function(cmcs_init_project)
     set(${_FUNC_PREFIX}_${PROJECT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
 
-    set(${PROJECT_NAME}_PARENT ${CMAKE_PROJECT_NAME})
-    cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
+
+    #cmcs_get_global_property(PROPERTY ${CMAKE_PROJECT_NAME}_PACKAGE_NAME)
+    #set(${PROJECT_NAME}_PARENT ${CMAKE_PROJECT_NAME}_PACKAGE_NAME)
+    #cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
 
     if(DEFINED ${PROJECT_NAME}_IS_SUBPROJECT)
         cmcs_error_message("${PROJECT_NAME} has two calls to cmcs_init_project! Remove one!")
