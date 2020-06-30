@@ -48,6 +48,8 @@ function(cmcs_init_project)
             cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_SYMLINKED_BUILD_INCLUDEDIR)
             set(${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR ${${${PROJECT_NAME}_PARENT}_SYMLINKED_BUILD_INCLUDEDIR})
         endif()
+        cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_CONFIG_INSTALL_DESTINATION)
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${${${PROJECT_NAME}_PARENT}_CONFIG_INSTALL_DESTINATION}/components")
         #cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_SYMLINKED_BUILD_INCLUDEDIR)
         #cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR DEFAULT "${${${PROJECT_NAME}_PARENT}_SYMLINKED_BUILD_INCLUDEDIR}")
         #cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_VERSION)
@@ -71,6 +73,7 @@ function(cmcs_init_project)
         endif()
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
         
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
         
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR DEFAULT "FALSE")
     endif()
@@ -81,7 +84,7 @@ function(cmcs_init_project)
 
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_EXPORT_NAME DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
     
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
+    
 
     cmcs_define_project_properties(PROJECT_NAME ${PROJECT_NAME})
     # TODO: Replace with foreach()
