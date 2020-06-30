@@ -53,8 +53,8 @@ macro(cmcs_project)
                     cmcs_set_global_property(PREFIX ${VAR_PREFIX} PROPERTY ${${VAR_PREFIX}_PROJECT_NAME}_PARENT)
 
                     # Add the new project as a child to the previous project parent childs
-                    set(${${PROJECT_NAME}_PARENT}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
-                    cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${${PROJECT_NAME}_PARENT}_CHILD)
+                    set(${${PROJECT_NAME}_PARENT}_CHILDS ${${VAR_PREFIX}_PROJECT_NAME})
+                    cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${${PROJECT_NAME}_PARENT}_CHILDS)
                     message(VERBOSE "[CMakeCS]: Creating project:'${${VAR_PREFIX}_PROJECT_NAME}' as child of:'${${PROJECT_NAME}_PARENT}'")
                 else()
                     message(VERBOSE "[CMakeCS]: Creating project without parent:'${${VAR_PREFIX}_PROJECT_NAME}'")
@@ -76,8 +76,8 @@ macro(cmcs_project)
                 # Project is not locked so the new project is a subproject of the current. 
                 message(VERBOSE "[CMakeCS]: Creating project:'${${VAR_PREFIX}_PROJECT_NAME}' as child of:'${PROJECT_NAME}'")
 
-                set(${PROJECT_NAME}_CHILD ${${VAR_PREFIX}_PROJECT_NAME})
-                cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${PROJECT_NAME}_CHILD)
+                set(${PROJECT_NAME}_CHILDS ${${VAR_PREFIX}_PROJECT_NAME})
+                cmcs_set_global_property(APPEND_OPTION APPEND PROPERTY ${PROJECT_NAME}_CHILDS)
 
                 # Current project is parent of new project.
                 set(${VAR_PREFIX}_${${VAR_PREFIX}_PROJECT_NAME}_PARENT ${PROJECT_NAME})
