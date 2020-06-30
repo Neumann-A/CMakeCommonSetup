@@ -43,7 +43,7 @@ function(cmcs_add_target)
                     set(${_VAR_PREFIX}_OUTPUT_NAME ${${PROJECT_NAME}_PACKAGE_NAME}_${${_VAR_PREFIX}_TARGET_NAME})
                 endif()
             endif()
-            set_target_properties(${${_VAR_PREFIX}_TARGET_NAME} PROPERTIES OUTPUT_NAME ${_VAR_PREFIX}_OUTPUT_NAME)
+            set_target_properties(${${_VAR_PREFIX}_TARGET_NAME} PROPERTIES OUTPUT_NAME ${${_VAR_PREFIX}_OUTPUT_NAME})
         endif()
     endif()
 
