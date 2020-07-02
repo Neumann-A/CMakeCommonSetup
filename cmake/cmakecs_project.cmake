@@ -134,10 +134,9 @@ macro(cmcs_project_file _filename)
         cmcs_error_message("cmcs_project_file requires a valid relative or absolute filepath. Path given is:${_filename}; Absolute Path:${${VAR_PREFIX}_filename_full_path}")
     endif()
 
-    file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
-    cmcs_sanetize_input(${VAR_PREFIX}_contents ${VAR_PREFIX}_contents) # Transforms everything into a list
-    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables
+    cmcs_read_input_file("${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
     message(TRACE "[CMakeCS] Project file contents:${${VAR_PREFIX}_contents}")
+    
     if(${VAR_PREFIX}_TOPLEVEL)
         cmcs_init_project(${${VAR_PREFIX}_contents}) 
     else()

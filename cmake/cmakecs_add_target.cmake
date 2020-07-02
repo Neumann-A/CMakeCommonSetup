@@ -229,9 +229,8 @@ function(cmcs_read_target_file _filename)
         cmcs_error_message("cmcs_read_target_file requires a valid relative or absolute filepath. Path given is:${_filename}|${${VAR_PREFIX}_filename_full_path}")
     endif()
     #message(VERBOSE "[CMakeCS]: Loading target file:${${VAR_PREFIX}_filename_full_path}")
-    file(READ "${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
-    cmcs_sanetize_input(${VAR_PREFIX}_contents ${VAR_PREFIX}_contents) # Transforms everything into a list
-    string(CONFIGURE "${${VAR_PREFIX}_contents}" ${VAR_PREFIX}_contents) # Expands CMake variables
-    message(TRACE "[CMakeCS]: Target contents:${${VAR_PREFIX}_contents}")
+    cmcs_read_input_file("${${VAR_PREFIX}_filename_full_path}" ${VAR_PREFIX}_contents)
+    message(TRACE "[CMakeCS] Target file contents:${${VAR_PREFIX}_contents}")
+
     cmcs_add_target(${${VAR_PREFIX}_contents})
 endfunction()
