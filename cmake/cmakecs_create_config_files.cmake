@@ -182,7 +182,10 @@ function(cmcs_create_config_files)
         endif(${PROJECT_NAME}_CHILDS)
 
         string(APPEND _config_contents "\n # Finish up \n")
-        string(APPEND _config_contents "include(\${CMAKE_CURRENT_LIST_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake)\n")
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORTED_TARGETS)
+        if(${PROJECT_NAME}_EXPORTED_TARGETS)
+            string(APPEND _config_contents "include(\${CMAKE_CURRENT_LIST_DIR}/${${PROJECT_NAME}_PACKAGE_NAME}Targets.cmake)\n")
+        endif()
         if(${_VAR_PREFIX}_SETUP_MODULE_PATH)
             string(APPEND _config_contents "set(CMAKE_MODULE_PATH \${CMAKE_FIND_PACKAGE_NAME}_CMAKE_MODULE_PATH_BACKUP)\n") # Restoring old module path
         endif()
