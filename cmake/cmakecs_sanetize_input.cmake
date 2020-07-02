@@ -14,6 +14,6 @@ function(cmcs_read_input_file in_file out_contents)
         cmcs_sanetize_input(_line _sanitzed_line) # Transforms everything into a list
         list(APPEND _sanitzed_input_list "${_sanitzed_line}")
     endforeach()
-    string(CONFIGURE "${${out_contents}}" ${out_contents}) # Expands CMake variables
+    string(CONFIGURE "${_sanitzed_input_list}" _sanitzed_input_list) # Expands CMake variables
     set(${out_contents} "${_sanitzed_input_list}" PARENT_SCOPE)
 endfunction()
