@@ -19,6 +19,7 @@ set(CMAKECS_PROJECT_MULTI_ARGS "LANGUAGES"
                                "MODULES_TO_INCLUDE" # Modules to include in the generated config
                                "SUBDIRECTORIES"
                                "TARGET_FILES"
+                               "INCLUDES"
                                "EXPORTED_VARIABLES" # These variables will be exported in the config 
                                "CONDITION" # Condition for which the project is loaded"
                                 CACHE INTERNAL "")

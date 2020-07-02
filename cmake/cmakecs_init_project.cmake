@@ -272,6 +272,11 @@ function(cmcs_init_project)
         endif()
     endforeach()
 
+    foreach(_include IN LISTS ${_VAR_PREFIX}_INCLUDES)
+        message(VERBOSE "[CMakeCS] '${${_VAR_PREFIX}_PACKAGE_NAME}': Including '${_include}' (Project:'${PROJECT_NAME}')")
+        include("${_include}")
+    endforeach()
+
     foreach(_subdir IN LISTS ${_VAR_PREFIX}_SUBDIRECTORIES)
         message(VERBOSE "[CMakeCS] '${${_VAR_PREFIX}_PACKAGE_NAME}': Adding subdirectory '${_subdir}' (Project:'${PROJECT_NAME}')")
         add_subdirectory("${_subdir}")
