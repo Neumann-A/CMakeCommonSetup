@@ -65,6 +65,9 @@ function(cmcs_finalize_project)
 
     # Disable find_package for internally available packages. 
     set(CMAKE_DISABLE_FIND_PACKAGE_${${PROJECT_NAME}_PACKAGE_NAME} TRUE CACHE INTERNAL "" FORCE)
+    set(${${PROJECT_NAME}_PACKAGE_NAME}_FOUND TRUE CACHE INTERNAL "" FORCE)
+    set(_CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_FOUND TRUE)
+    cmcs_set_global_property(PROPERTY _CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_FOUND)
 
     cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_LOCKED)
     message(VERBOSE "[CMakeCS] '${${PROJECT_NAME}_PACKAGE_NAME}': Finished!")
