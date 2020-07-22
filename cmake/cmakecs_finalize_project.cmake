@@ -68,7 +68,7 @@ function(cmcs_finalize_project)
     set(${${PROJECT_NAME}_PACKAGE_NAME}_FOUND TRUE CACHE INTERNAL "" FORCE)
     set(_CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_FOUND TRUE)
     cmcs_set_global_property(PROPERTY _CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_FOUND)
-    set_property(GLOBAL APPEND PROPERTY PACKAGES_FOUND ${PROJECT_NAME}_PACKAGE_NAME})
+    set_property(GLOBAL APPEND PROPERTY PACKAGES_FOUND ${${PROJECT_NAME}_PACKAGE_NAME})
     
     cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_LOCKED)
     message(VERBOSE "[CMakeCS] '${${PROJECT_NAME}_PACKAGE_NAME}': Finished!")
