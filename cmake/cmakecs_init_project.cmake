@@ -35,7 +35,9 @@ function(cmcs_init_project)
 
     if(${PROJECT_NAME}_PARENT)
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_PACKAGE_NAME)
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${${PROJECT_NAME}_PARENT}_PACKAGE_NAME}_${PROJECT_NAME})
+        if(${${PROJECT_NAME}_PARENT}_PACKAGE_NAME)
+            cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${${${PROJECT_NAME}_PARENT}_PACKAGE_NAME}_${PROJECT_NAME})
+        endif()
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_NAMESPACE)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${${PROJECT_NAME}_PARENT}_NAMESPACE})
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_INSTALL_INCLUDEDIR)
@@ -86,8 +88,6 @@ function(cmcs_init_project)
     endif()
 
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_EXPORT_NAME DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
-    
-    
 
     cmcs_define_project_properties(PROJECT_NAME ${PROJECT_NAME})
     # TODO: Replace with foreach()
