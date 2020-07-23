@@ -155,6 +155,14 @@ function(cmcs_add_target)
         cmake_print_variables(_SYM_BUILD_INCLUDE)
         file(REMOVE_RECURSE "${_SYM_BUILD_INCLUDE}") # Remove a possible build include dir
         file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/../") # Create the subfolder if required
+        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${${PROJECT_NAME}_BUILD_INCLUDEDIR}/../>)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
+        if(${PROJECT_NAME}_PARENT)
+            cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_BUILD_INCLUDEDIR)
+            if(${${PROJECT_NAME}_PARENT}_BUILD_INCLUDEDIR)
+                target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${${${PROJECT_NAME}_PARENT}_BUILD_INCLUDEDIR}/../>)
+            endif()
+        endif()
 
         foreach(_headerdir IN LISTS ${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
             if(IS_ABSOLUTE "${_headerdir}")
