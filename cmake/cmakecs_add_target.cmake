@@ -148,20 +148,25 @@ function(cmcs_add_target)
             set(_INC_ACCESS PUBLIC)
         endif()
 
-        file(REMOVE_RECURSE "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}") # Remove a possible build include dir
-        file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}") # Create the subfolder if required
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
+
+        set(_SYM_BUILD_INCLUDE "${${PROJECT_NAME}_BUILD_INCLUDEDIR}")
+
+        cmake_print_variables(_SYM_BUILD_INCLUDE)
+        file(REMOVE_RECURSE "${_SYM_BUILD_INCLUDE}") # Remove a possible build include dir
+        file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/../") # Create the subfolder if required
 
         foreach(_headerdir IN LISTS ${_VAR_PREFIX}_HEADER_DIRECTORIES_TO_INSTALL)
             if(IS_ABSOLUTE "${_headerdir}")
                 target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${_headerdir}>)
                 if(${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
-                    file(CREATE_LINK "${_headerdir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}" SYMBOLIC)
+                    file(CREATE_LINK "${_headerdir}" "${_SYM_BUILD_INCLUDE}" SYMBOLIC)
                 endif()
             else()
                 target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${_headerdir}>
                                                                                         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURE_DIR}/${_headerdir}>)
                 if(${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
-                    file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_headerdir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}" SYMBOLIC)
+                    file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_headerdir}" "${_SYM_BUILD_INCLUDE}" SYMBOLIC)
                 endif()
             endif()
         endforeach()
@@ -195,7 +200,7 @@ function(cmcs_add_target)
             unset(_current_dir)
             #cmake_print_variables(_root_headerdirs)
             foreach(_root_dir IN LISTS _root_headerdirs)
-                file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_root_dir}" "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/${PROJECT_NAME}" SYMBOLIC)
+                file(CREATE_LINK "${CMAKE_CURRENT_SOURCE_DIR}/${_root_dir}" "${_SYM_BUILD_INCLUDE}" SYMBOLIC)
             endforeach()
         endif()
 
