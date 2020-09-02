@@ -17,9 +17,7 @@ set(CMAKECS_PROJECT_MULTI_ARGS "LANGUAGES"
                                "RECOMMENDED_PACKAGES;RUNTIME_PACKAGES" # TODO
                                "PUBLIC_CMAKE_FILES;PUBLIC_CMAKE_DIRS" # These will probably be renamed
                                "MODULES_TO_INCLUDE" # Modules to include in the generated config
-                               "SUBDIRECTORIES"
-                               "TARGET_FILES"
-                               "INCLUDES"
+                               "INCLUDES;SUBDIRECTORIES;INCLUDES_AFTER_SUBDIRECTORIES;TARGET_FILES;INCLUDES_AFTER_TARGETS"
                                "EXPORTED_VARIABLES" # These variables will be exported in the config 
                                "CONDITION" # Condition for which the project is loaded"
                                 CACHE INTERNAL "")
