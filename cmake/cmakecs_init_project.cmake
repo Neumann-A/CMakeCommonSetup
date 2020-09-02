@@ -17,6 +17,7 @@
 
 # All info is getting stored in ${PROJECT_NAME}_<parametername>
 function(cmcs_init_project)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "init_project")
     message(TRACE "[CMakeCS cmcs_init_project]: ${ARGN}|${ARGC}")
     include(GNUInstallDirs) # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -295,9 +296,19 @@ function(cmcs_init_project)
         add_subdirectory("${_subdir}")
     endforeach()
 
+    foreach(_include IN LISTS ${_VAR_PREFIX}_INCLUDES_AFTER_SUBDIRECTORIES)
+        message(VERBOSE "[CMakeCS] '${${_VAR_PREFIX}_PACKAGE_NAME}': Including '${_include}' (Project:'${PROJECT_NAME}')")
+        include("${_include}")
+    endforeach()
+
     foreach(_targetfile IN LISTS ${_VAR_PREFIX}_TARGET_FILES)
         message(VERBOSE "[CMakeCS] '${${_VAR_PREFIX}_PACKAGE_NAME}': Creating target from '${_targetfile}'")
         cmcs_read_target_file(${_targetfile})
+    endforeach()
+
+    foreach(_include IN LISTS ${_VAR_PREFIX}_INCLUDES_AFTER_TARGETS)
+        message(VERBOSE "[CMakeCS] '${${_VAR_PREFIX}_PACKAGE_NAME}': Including '${_include}' (Project:'${PROJECT_NAME}')")
+        include("${_include}")
     endforeach()
 
     if(NOT ${_VAR_PREFIX}_NO_AUTOMATIC_CONFIG_FILE)
@@ -311,4 +322,5 @@ function(cmcs_init_project)
     if(NOT ${_VAR_PREFIX}_NO_FINALIZE)
         cmcs_finalize_project()
     endif()
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endfunction()

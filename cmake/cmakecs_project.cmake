@@ -3,6 +3,7 @@
 # USE_DIRECTORY_AS_PROJECT_NAME -> Uses the current directory (CMAKE_PARENT_LIST_FILE) name as the project name
 # 
 macro(cmcs_project)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "CMakeCS")
     set(VAR_PREFIX _cmcs_p)
     #include("${CMAKE_CURRENT_LIST_FILE}/cmakecs_project_options.cmakecs" NO_POLICY_SCOPE)
     cmake_parse_arguments("${VAR_PREFIX}" "${CMAKECS_PROJECT_OPTIONS}" "${CMAKECS_PROJECT_ARGS}" "${CMAKECS_PROJECT_MULTI_ARGS}" "${ARGN}")
@@ -128,9 +129,11 @@ macro(cmcs_project)
 
         cmcs_init_project(${ARGN})
     endif()
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endmacro()
 
 macro(cmcs_project_file _filename)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "read_project")
     set(VAR_PREFIX _cmcs_pf)
     cmake_parse_arguments("${VAR_PREFIX}" "TOPLEVEL" "" "" ${ARGN})
     get_filename_component(${VAR_PREFIX}_filename_full_path "${_filename}" ABSOLUTE)
@@ -151,6 +154,7 @@ macro(cmcs_project_file _filename)
     unset(${VAR_PREFIX}_filename_full_path )
     unset(${VAR_PREFIX}_contents)
     unset(VAR_PREFIX)
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endmacro()
 
 ## project() call overrie

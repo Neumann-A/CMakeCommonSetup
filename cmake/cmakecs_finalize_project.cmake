@@ -2,6 +2,7 @@
 # for internal builds. 
 
 function(cmcs_finalize_project)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "finalize")
     cmcs_error_if_project_locked()
     cmcs_error_if_project_not_init()
     #cmcs_create_function_variable_prefix(_VAR_PREFIX)
@@ -72,4 +73,5 @@ function(cmcs_finalize_project)
     
     cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_LOCKED)
     message(VERBOSE "[CMakeCS] '${${PROJECT_NAME}_PACKAGE_NAME}': Finished!")
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endfunction()

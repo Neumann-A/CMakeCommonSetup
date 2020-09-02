@@ -1,4 +1,5 @@
 function(cmcs_add_target)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "add_target")
     cmcs_create_function_variable_prefix(_VAR_PREFIX)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" 
                                        "${CMAKECS_TARGET_OPTIONS}" 
@@ -220,9 +221,11 @@ function(cmcs_add_target)
     endif()
 
     set(${PROJECT_NAME}_PROJECT_TARGETS ${${PROJECT_NAME}_PROJECT_TARGETS} ${${_VAR_PREFIX}_TARGET_NAME} CACHE INTERNAL "")
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endfunction()
 
 function(cmcs_read_target_file _filename)
+    list(APPEND CMAKE_MESSAGE_CONTEXT "read_target")
     set(${VAR_PREFIX} _cmcs_rtf)
     get_filename_component(${VAR_PREFIX}_filename_full_path "${_filename}" ABSOLUTE)
     if(NOT EXISTS "${${VAR_PREFIX}_filename_full_path}")
@@ -233,4 +236,5 @@ function(cmcs_read_target_file _filename)
     message(TRACE "[CMakeCS] Target file contents:${${VAR_PREFIX}_contents}")
 
     cmcs_add_target(${${VAR_PREFIX}_contents})
+    list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endfunction()
