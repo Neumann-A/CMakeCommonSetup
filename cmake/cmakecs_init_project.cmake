@@ -46,6 +46,9 @@ function(cmcs_init_project)
             cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${${${PROJECT_NAME}_PARENT}_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
             cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${${${PROJECT_NAME}_PARENT}_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
         endif()
+        cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_INCLUDEDIR_TREE)
+        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INCLUDEDIR_TREE DEFAULT "${${${PROJECT_NAME}_PARENT}_INCLUDEDIR_TREE}/${PROJECT_NAME}")
+
         cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_USAGE_INCLUDEDIR)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${${${PROJECT_NAME}_PARENT}_USAGE_INCLUDEDIR}")
         #cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_BUILD_INCLUDEDIR)
@@ -79,8 +82,9 @@ function(cmcs_init_project)
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
         cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}")
     endif()
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
-    
+    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INCLUDEDIR_TREE DEFAULT "include/${${_VAR_PREFIX}_PACKAGE_NAME}")
+    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INCLUDEDIR_TREE}")
+
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
     
     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR DEFAULT "FALSE")
@@ -114,6 +118,7 @@ function(cmcs_init_project)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INCLUDEDIR_TREE)
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
 
     set(${_FUNC_PREFIX}_${PROJECT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export

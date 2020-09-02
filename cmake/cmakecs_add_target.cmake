@@ -153,9 +153,10 @@ function(cmcs_add_target)
 
         set(_SYM_BUILD_INCLUDE "${${PROJECT_NAME}_BUILD_INCLUDEDIR}")
         file(REMOVE_RECURSE "${_SYM_BUILD_INCLUDE}") # Remove a possible build include dir
-        file(MAKE_DIRECTORY "${${PROJECT_NAME}_BUILD_INCLUDEDIR}/../") # Create the subfolder if required
+        get_filename_component(PARENT_DIR "${${PROJECT_NAME}_BUILD_INCLUDEDIR}" DIRECTORY)
+        file(MAKE_DIRECTORY "${PARENT_DIR}") # Create the subfolder if required
         target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${${PROJECT_NAME}_BUILD_INCLUDEDIR}/../>)
-        target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+        #target_include_directories(${${_VAR_PREFIX}_TARGET_NAME} ${_INC_ACCESS} $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>)
         cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
         if(${PROJECT_NAME}_PARENT)
             cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}_PARENT}_BUILD_INCLUDEDIR)
