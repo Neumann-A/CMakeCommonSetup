@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 
 # How to define options correctly for consumption with feature options
 include(FeatureSummary)
-set(CMakeCS_ENABLE_GTest ON CACHE BOOL "" FORCE)
+set(CMakeCS_ENABLE_GTest OFF CACHE BOOL "" FORCE)
 #option(WITH_GTestWrapper "Enables the creation of the GTestWrapper target" ON)
 #add_feature_info(GTestWrapper WITH_GTestWrapper "Adds the CMakeCS::GTestWrapper target")
 option(WITH_MYFEAT1 "Help for MYFEAT1" ON)
@@ -22,7 +22,7 @@ include(cmake/CMakeCS.cmake)
 project("Project.CMakeCS.cmakecs") 
 
 # Showing off the feature sommary
-feature_summary(WHAT ALL )
+feature_summary(WHAT ALL)
 
 ### Alternativ style (without project() override)
 # This is ugly but will fire a CMake warning if the first project 
