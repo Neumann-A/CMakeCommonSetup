@@ -115,8 +115,17 @@ function(cmcs_add_target)
         endif()
     endforeach()
 
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_TARGETS_FOLDER)
+    if(${PROJECT_NAME}_TARGETS_FOLDER AND NOT ${_VAR_PREFIX}_LIBRARY_TYPE MATCHES "INTERFACE")
+        set_target_properties(${${_VAR_PREFIX}_TARGET_NAME} PROPERTIES FOLDER ${${PROJECT_NAME}_TARGETS_FOLDER})
+    endif()
+
     if(${_VAR_PREFIX}_IDE_INTERFACE_TARGET)
         add_custom_target(${${_VAR_PREFIX}_TARGET_NAME}_IDE DEPENDS ${${_VAR_PREFIX}_TARGET_NAME} SOURCES ${${${_VAR_PREFIX}_TARGET_NAME}_IDE_SOURCES})
+        set_target_properties(${${_VAR_PREFIX}_TARGET_NAME}_IDE PROPERTIES PROJECT_LABEL ${${_VAR_PREFIX}_TARGET_NAME})
+        if(${PROJECT_NAME}_TARGETS_FOLDER)
+            set_target_properties(${${_VAR_PREFIX}_TARGET_NAME}_IDE PROPERTIES FOLDER ${${PROJECT_NAME}_TARGETS_FOLDER})
+        endif()
     endif()
 
     if(${_VAR_PREFIX}_REUSE_PRECOMPILE_HEADERS_FROM_TARGETS)
