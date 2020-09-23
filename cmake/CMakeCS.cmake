@@ -67,8 +67,8 @@ list(APPEND cmakecs_cmake_files
             project
             project_properties
             init_project
-            finalize_project            
-            test            
+            finalize_project
+            test
             get_toplevel_project_info
 )
 foreach(_file IN LISTS cmakecs_cmake_files)
