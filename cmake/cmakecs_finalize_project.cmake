@@ -61,7 +61,12 @@ function(cmcs_finalize_project)
     # just as the target file would do. Assumes that all variables are available just 
     # like if find_package is called.
     foreach(_target IN LISTS ${PROJECT_NAME}_EXPORTED_TARGETS)
-        add_library(${${PROJECT_NAME}_NAMESPACE}::${_target} ALIAS ${_target})
+        get_target_property(IS_EXECUTABLE ${_target} TYPE)
+        if(IS_EXECUTABLE STREQUAL "EXECUTABLE")
+            add_executable(${${PROJECT_NAME}_NAMESPACE}::${_target} ALIAS ${_target})
+        else()
+            add_library(${${PROJECT_NAME}_NAMESPACE}::${_target} ALIAS ${_target})
+        endif()
     endforeach()
 
     # Disable find_package for internally available packages. 
