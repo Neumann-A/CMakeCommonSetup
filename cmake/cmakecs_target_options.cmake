@@ -21,7 +21,7 @@ set(CMAKECS_TARGET_MULTI_ARGS "PUBLIC_SOURCES;PRIVATE_SOURCES;INTERFACE_SOURCES;
                               "CONDITION" # Condition for which the target is generated
                               "TARGET_OPTIONS_FILE;EXPORTED_OPTIONS" # List of variables which gets added as a custom property to the target (TODO: not yet implemented)
                               "PUBLIC_HEADER;PRIVATE_HEADER;HEADERS;HEADER_DIRECTORIES_TO_INSTALL" CACHE INTERNAL "")
-
+mark_as_advanced(CMAKECS_TARGET_OPTIONS CMAKECS_TARGET_ARGS CMAKECS_TARGET_MULTI_ARGS)
 
 
 

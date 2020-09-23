@@ -22,7 +22,7 @@ set(CMAKECS_PROJECT_MULTI_ARGS "LANGUAGES"
                                "EXPORTED_VARIABLES" # These variables will be exported in the config 
                                "CONDITION" # Condition for which the project is loaded"
                                 CACHE INTERNAL "")
-
+mark_as_advanced(CMAKECS_PROJECT_OPTIONS CMAKECS_PROJECT_ARGS CMAKECS_PROJECT_MULTI_ARGS)
 ## Additional options for every package after EXTENDED_PACKAGES_INFO:
 # ONE_ARG: <package>_(VERSION|PURPOSE)
 # MULTI_ARG: <package>_(COMPONENTS|FIND_OPTIONS|CONDITION)
