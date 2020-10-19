@@ -27,6 +27,8 @@ function(cmcs_define_project_properties) # Defines general project properties
                                 BRIEF_DOCS "Stores a list of exported targets in this project." FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_EXPORT_NAME
                                 BRIEF_DOCS "Stores the name of the export group for this project." FULL_DOCS " ")
+    cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_COMPONENTS
+                                BRIEF_DOCS "Stores the names of components for this project as a list." FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_CONFIG_INSTALL_DESTINATION
                                 BRIEF_DOCS "Stores the installation destination for ${PACKAGE_NAME}Config.cmake and related files" FULL_DOCS " ")
     cmcs_define_global_property(PROPERTY ${${_VAR_PREFIX}_PROJECT_NAME}_PUBLIC_CMAKE_FILES
