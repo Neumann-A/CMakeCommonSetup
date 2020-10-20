@@ -3,15 +3,15 @@ set(CMAKECS_COMPONENT_OPTIONS "USE_DIRECTORY_AS_COMPONENT_NAME"
                             "NO_FINALIZE;NO_AUTOMATIC_CONFIG_FILE"
                             "CONFIG_WITH_MODULES"
                             "EXTENDED_PACKAGES_INFO" # Just to block cmake_parse_argument for MULTI_ARGS
-                            "SYMLINKED_BUILD_INCLUDEDIR" # creates a mirror of the installed include layout in CMAKE_BINARY_DIR via symlinks
+                            #"SYMLINKED_BUILD_INCLUDEDIR" # creates a mirror of the installed include layout in CMAKE_BINARY_DIR via symlinks
                             CACHE INTERNAL "")
 set(CMAKECS_COMPONENT_ARGS "COMPONENT_NAME;VERSION;DESCRIPTION"
                          #"PACKAGE_NAME;NAMESPACE;EXPORT_NAME"
                          "VERSION_COMPATIBILITY;CONFIG_INPUT_FILE;CONFIG_INSTALL_DESTINATION"
                          #"OPTION_FILE" # TODO
                          #"PUBLIC_MODULE_DIRECTORIES" #TODO: Should be handle on Project Scope
-                         "INSTALL_INCLUDEDIR"
-                         "USAGE_INCLUDEDIR"
+                         #"INSTALL_INCLUDEDIR"
+                         #"USAGE_INCLUDEDIR"
                          "TARGETS_FOLDER"
                          CACHE INTERNAL "")
 set(CMAKECS_COMPONENT_MULTI_ARGS #"LANGUAGES"
@@ -30,34 +30,36 @@ function(cmcs_component)
     message(TRACE "[CMakeCS cmcs_component]: ${ARGN}|${ARGC}")
 
     cmcs_create_function_variable_prefix(_FUNC_PREFIX)
-    set(_VAR_PREFIX "${_FUNC_PREFIX}_${PROJECT_NAME}")
+    cmake_parse_arguments(PARSE_ARGV 0 "${_FUNC_PREFIX}" "" "COMPONENT_NAME" "")
+    set(COMPONENT_NAME ${${_FUNC_PREFIX}_COMPONENT_NAME})
+    set(_VAR_PREFIX "${_FUNC_PREFIX}_${PROJECT_NAME}_${COMPONENT_NAME}")
     #include("${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmakecs_project_options.cmake" NO_POLICY_SCOPE)
     cmake_parse_arguments(PARSE_ARGV 0 "${_VAR_PREFIX}" "${CMAKECS_PROJECT_OPTIONS}" "${CMAKECS_PROJECT_ARGS}" "${CMAKECS_PROJECT_MULTI_ARGS}")
-    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
+    
+    #cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PARENT)
 
     #cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_PACKAGE_NAME DEFAULT ${PROJECT_NAME})
-    cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}}_NAMESPACE)
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_TARGETS_FOLDER DEFAULT  ${${_VAR_PREFIX}_PACKAGE_NAME})
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
-    if(CMAKE_PROJECT_VERSION)
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT ${CMAKE_PROJECT_VERSION})
-    else()
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT "0.1.1")
-    endif()
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT "AnyNewerVersion")
-    if(${_VAR_PREFIX}_VERSION)
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}-${${_VAR_PREFIX}_VERSION}/${${_VAR_PREFIX}_PACKAGE_NAME}")
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}-${${_VAR_PREFIX}_VERSION}")
-    else()
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
-        cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}")
-    endif()
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INCLUDEDIR_TREE DEFAULT "include/${${_VAR_PREFIX}_PACKAGE_NAME}")
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INCLUDEDIR_TREE}")
+    # cmcs_get_global_property(PROPERTY ${${PROJECT_NAME}}_NAMESPACE)
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_TARGETS_FOLDER DEFAULT  ${${_VAR_PREFIX}_PACKAGE_NAME})
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_NAMESPACE DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
+    # if(CMAKE_PROJECT_VERSION)
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT ${CMAKE_PROJECT_VERSION})
+    # else()
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION DEFAULT "0.1.1")
+    # endif()
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_VERSION_COMPATIBILITY DEFAULT "AnyNewerVersion")
+    # if(${_VAR_PREFIX}_VERSION)
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}-${${_VAR_PREFIX}_VERSION}/${${_VAR_PREFIX}_PACKAGE_NAME}")
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}-${${_VAR_PREFIX}_VERSION}")
+    # else()
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INSTALL_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
+    #     cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_USAGE_INCLUDEDIR DEFAULT "${CMAKE_INSTALL_INCLUDEDIR}")
+    # endif()
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_INCLUDEDIR_TREE DEFAULT "include/${${_VAR_PREFIX}_PACKAGE_NAME}")
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_BUILD_INCLUDEDIR DEFAULT "${CMAKE_CURRENT_BINARY_DIR}/${${_VAR_PREFIX}_INCLUDEDIR_TREE}")
 
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
-    
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_SYMLINKED_BUILD_INCLUDEDIR DEFAULT "TRUE")
+    # cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_CONFIG_INSTALL_DESTINATION DEFAULT "${CMAKE_INSTALL_DATAROOTDIR}/${${_VAR_PREFIX}_PACKAGE_NAME}")
+
 
     if(${_VAR_PREFIX}_OPTION_FILE)
         include("${${_VAR_PREFIX}_OPTION_FILE}")
@@ -67,33 +69,42 @@ function(cmcs_component)
 
     cmcs_define_project_properties(PROJECT_NAME ${PROJECT_NAME})
     # TODO: Replace with foreach()
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_NAMESPACE)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_NAME)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_REQUIRED_PACKAGES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONAL_PACKAGES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_RECOMMENDED_PACKAGES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_RUNTIME_PACKAGES) 
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONAL_CONDITIONAL_PACKAGES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION_COMPATIBILITY)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INPUT_FILE)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_DIRS)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_MODULES_TO_INCLUDE)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_MODULE_DIRECTORIES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONS)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORTED_VARIABLES)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INCLUDEDIR_TREE)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_TARGETS_FOLDER)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
 
-    set(${_FUNC_PREFIX}_${PROJECT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export
-    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_NAMESPACE)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_NAMESPACE)
+    cmcs_set_global_property(APPEND_OPTION "APPEND" PROPERTY ${PROJECT_NAME}_COMPONENTS ${COMPONENT_NAME})
+    cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_NAMESPACE "${${PROJECT_NAME}_NAMESPACE}::${COMPONENT_NAME}")
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_OPTIONS)
+
+
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_TARGETS)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_EXPORT_NAME)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_REQUIRED_PACKAGES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONAL_PACKAGES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_RECOMMENDED_PACKAGES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_RUNTIME_PACKAGES) 
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONAL_CONDITIONAL_PACKAGES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_VERSION_COMPATIBILITY)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_CONFIG_INPUT_FILE)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_FILES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_CMAKE_DIRS)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_MODULES_TO_INCLUDE)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PUBLIC_MODULE_DIRECTORIES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_OPTIONS)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_EXPORTED_VARIABLES)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INSTALL_INCLUDEDIR)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_USAGE_INCLUDEDIR)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_BUILD_INCLUDEDIR)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_INCLUDEDIR_TREE)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_SYMLINKED_BUILD_INCLUDEDIR)
+    #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_TARGETS_FOLDER)
+
+    set(${_FUNC_PREFIX}_${PROJECT_NAME}_${COMPONENT_NAME}_EXPORT_ON_BUILD ON) # TODO: Check if necessary or always export
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_EXPORT_ON_BUILD)
 
 
     #cmcs_get_global_property(PROPERTY ${CMAKE_PROJECT_NAME}_PACKAGE_NAME)
@@ -145,7 +156,7 @@ function(cmcs_component)
             string(APPEND _find_string ";${${_VAR_PREFIX}_${_package}_FIND_OPTIONS}")
         endif()
         set(${PROJECT_NAME}_${_package}_FIND_PACKAGE "${_find_string}" CACHE INTERNAL "")
-        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${_package}_FIND_PACKAGE)
+        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_${_package}_FIND_PACKAGE)
         find_package(${_find_string})
         if(${_VAR_PREFIX}_${_package}_PURPOSE)
             string(REPLACE "\"" "" ${_VAR_PREFIX}_${_package}_PURPOSE ${${_VAR_PREFIX}_${_package}_PURPOSE})
@@ -171,7 +182,7 @@ function(cmcs_component)
             string(APPEND _find_string ";${${_VAR_PREFIX}_${_package}_FIND_OPTIONS}")
         endif()
         set(${PROJECT_NAME}_${_package}_FIND_PACKAGE "${_find_string}" CACHE INTERNAL "")
-        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${_package}_FIND_PACKAGE)
+        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_${_package}_FIND_PACKAGE)
         if(NOT ${${_VAR_PREFIX}_PACKAGE_NAME}_ENABLE_${_package})
             #set(CMAKE_DISABLE_FIND_PACKAGE_${_package} TRUE CACHE BOOL "Disable search for ${_package}" FORCE) # This does not work with feature summary
             # Trick to make feature summary work with optional dependencies! 
@@ -209,7 +220,7 @@ function(cmcs_component)
             string(APPEND _find_string ";${${_VAR_PREFIX}_${_package}_FIND_OPTIONS}")
         endif()
         set(${PROJECT_NAME}_${_package}_FIND_PACKAGE "${_find_string}" CACHE INTERNAL "")
-        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${_package}_FIND_PACKAGE)
+        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_${_package}_FIND_PACKAGE)
         if(NOT ${${_VAR_PREFIX}_PACKAGE_NAME}_ENABLE_${_package})
             #set(CMAKE_DISABLE_FIND_PACKAGE_${_package} TRUE CACHE BOOL "Disable search for ${_package}" FORCE) # This does not work with feature summary
             # Trick to make feature summary work with optional dependencies! 
@@ -243,7 +254,7 @@ function(cmcs_component)
             string(APPEND _find_string ";${${_VAR_PREFIX}_${_package}_FIND_OPTIONS}")
         endif()
         set(${PROJECT_NAME}_${_package}_FIND_PACKAGE "${_find_string}" CACHE INTERNAL "")
-        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${_package}_FIND_PACKAGE)
+        cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_${_package}_FIND_PACKAGE)
         if(NOT ${${_VAR_PREFIX}_PACKAGE_NAME}_ENABLE_${_package})
             # Trick to make feature summary work with optional dependencies! 
             set(_DISABLE_FIND ";NO_DEFAULT_PATH")

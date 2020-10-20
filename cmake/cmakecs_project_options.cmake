@@ -2,7 +2,7 @@ set(CMAKECS_PROJECT_OPTIONS "USE_DIRECTORY_AS_PROJECT_NAME"
                             "NO_FINALIZE;NO_AUTOMATIC_CONFIG_FILE"
                             "CONFIG_WITH_MODULES"
                             "EXTENDED_PACKAGES_INFO" # Just to block cmake_parse_argument for MULTI_ARGS
-                            "SYMLINKED_BUILD_INCLUDEDIR" # creates a mirror of the installed include layout in CMAKE_BINARY_DIR via symlinks
+                            #"SYMLINKED_BUILD_INCLUDEDIR" # creates a mirror of the installed include layout in CMAKE_BINARY_DIR via symlinks
                             CACHE INTERNAL "")
 set(CMAKECS_PROJECT_ARGS "PROJECT_NAME;VERSION;HOMEPAGE_URL;DESCRIPTION"
                          "PACKAGE_NAME;NAMESPACE;EXPORT_NAME"
