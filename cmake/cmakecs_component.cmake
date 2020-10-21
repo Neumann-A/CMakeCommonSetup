@@ -6,7 +6,8 @@ set(CMAKECS_COMPONENT_OPTIONS "USE_DIRECTORY_AS_COMPONENT_NAME"
                             #"SYMLINKED_BUILD_INCLUDEDIR" # creates a mirror of the installed include layout in CMAKE_BINARY_DIR via symlinks
                             CACHE INTERNAL "")
 set(CMAKECS_COMPONENT_ARGS "COMPONENT_NAME;VERSION;DESCRIPTION"
-                         #"PACKAGE_NAME;NAMESPACE;EXPORT_NAME"
+                         "COMPONENT_NAMESPACE"
+                         "EXPORT_NAME"
                          "VERSION_COMPATIBILITY;CONFIG_INPUT_FILE;CONFIG_INSTALL_DESTINATION"
                          #"OPTION_FILE" # TODO
                          #"PUBLIC_MODULE_DIRECTORIES" #TODO: Should be handle on Project Scope
@@ -65,7 +66,19 @@ function(cmcs_component)
         include("${${_VAR_PREFIX}_OPTION_FILE}")
     endif()
 
-    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_EXPORT_NAME DEFAULT ${${_VAR_PREFIX}_PACKAGE_NAME})
+    # Setup component export name/group
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
+    cmcs_variable_exists_or_default(VARIABLE ${_VAR_PREFIX}_EXPORT_NAME DEFAULT ${${PROJECT_NAME}_PACKAGE_NAME}_${COMPONENT_NAME})
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_EXPORT_NAME)
+    # Setup export namespace
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_NAMESPACE)
+    if(${_VAR_PREFIX}_COMPONENT_NAMESPACE)
+        set(${_VAR_PREFIX}_NAMESPACE "${${PROJECT_NAME}_NAMESPACE}::${${_VAR_PREFIX}_COMPONENT_NAMESPACE}")
+    else()
+        set(${_VAR_PREFIX}_NAMESPACE "${${PROJECT_NAME}_NAMESPACE}")
+    endif()
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_NAMESPACE)
+    cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_COMPONENT_NAMESPACE)
 
     cmcs_define_project_properties(PROJECT_NAME ${PROJECT_NAME})
     # TODO: Replace with foreach()
@@ -73,12 +86,14 @@ function(cmcs_component)
 
     #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_PACKAGE_NAME)
     #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_NAMESPACE)
-    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_NAMESPACE)
+
     cmcs_set_global_property(APPEND_OPTION "APPEND" PROPERTY ${PROJECT_NAME}_COMPONENTS ${COMPONENT_NAME})
-    cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_NAMESPACE "${${PROJECT_NAME}_NAMESPACE}::${COMPONENT_NAME}")
+
+
+
     cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_OPTIONS)
 
-
+    cmcs_set_global_property(PROPERTY CURRENT_COMPONENT_NAME "${COMPONENT_NAME}")
     #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_TARGETS)
     #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_${COMPONENT_NAME}_EXPORT_NAME)
     #cmcs_set_global_property(PREFIX ${_FUNC_PREFIX} PROPERTY ${PROJECT_NAME}_REQUIRED_PACKAGES)
@@ -310,6 +325,9 @@ function(cmcs_component)
     if(NOT ${_VAR_PREFIX}_NO_FINALIZE)
         cmcs_finalize_component()
     endif()
+
+    unset(COMPONENT_NAME)
+    cmcs_set_global_property(PROPERTY CURRENT_COMPONENT_NAME "")
     list(POP_BACK CMAKE_MESSAGE_CONTEXT)
 endfunction()
 

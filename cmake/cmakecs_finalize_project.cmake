@@ -13,6 +13,7 @@ function(cmcs_finalize_project)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORTED_TARGETS)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_EXPORT_ON_BUILD)
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION)
+    cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_COMPONENTS)
 
     message(VERBOSE "[CMakeCS] '${${PROJECT_NAME}_PACKAGE_NAME}': Finalizing project")
     cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_CHILDS)
@@ -26,6 +27,41 @@ function(cmcs_finalize_project)
     endif()
 
     cmcs_trace_variables(${PROJECT_NAME}_PACKAGE_NAME ${PROJECT_NAME}_EXPORT_NAME ${PROJECT_NAME}_EXPORTED_TARGETS)
+
+    foreach(_component IN LISTS ${PROJECT_NAME}_COMPONENTS)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_${_component}_NAMESPACE)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_${_component}_EXPORT_NAME)
+        cmcs_get_global_property(PROPERTY ${PROJECT_NAME}_${_component}_EXPORTED_TARGETS)
+
+        if(${PROJECT_NAME}_EXPORT_ON_BUILD AND ${PROJECT_NAME}_${_component}_EXPORTED_TARGETS)
+            export(EXPORT ${${PROJECT_NAME}_${_component}_EXPORT_NAME}
+                NAMESPACE ${${PROJECT_NAME}_${_component}_NAMESPACE}::
+                FILE ${CMAKE_INSTALL_DATAROOTDIR}/${${PROJECT_NAME}_PACKAGE_NAME}/${${PROJECT_NAME}_PACKAGE_NAME}_${_component}Targets.cmake)
+        endif()
+        if(${PROJECT_NAME}_EXPORTED_TARGETS)
+            install(EXPORT ${${PROJECT_NAME}_${_component}_EXPORT_NAME}
+                    NAMESPACE ${${PROJECT_NAME}_${_component}_NAMESPACE}:: 
+                    FILE ${${PROJECT_NAME}_PACKAGE_NAME}_${_component}Targets.cmake 
+                    DESTINATION "${${PROJECT_NAME}_CONFIG_INSTALL_DESTINATION}")
+         endif()
+         foreach(_target IN LISTS ${PROJECT_NAME}_EXPORTED_TARGETS)
+            get_target_property(IS_EXECUTABLE ${_target} TYPE)
+            if(IS_EXECUTABLE STREQUAL "EXECUTABLE")
+                add_executable(${${PROJECT_NAME}_${_component}_NAMESPACE}::${_target} ALIAS ${_target})
+            else()
+                add_library(${${PROJECT_NAME}_${_component}_NAMESPACE}::${_target} ALIAS ${_target})
+            endif()
+        endforeach()
+        # Disable find_package for internally available packages. 
+        set(CMAKE_DISABLE_FIND_PACKAGE_${${PROJECT_NAME}_PACKAGE_NAME}_${_component} TRUE CACHE INTERNAL "" FORCE)
+        set(${${PROJECT_NAME}_PACKAGE_NAME}_${_component}_FOUND TRUE CACHE INTERNAL "" FORCE)
+        set(_CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_${_component}_FOUND TRUE)
+        cmcs_set_global_property(PROPERTY _CMakeCS_${${PROJECT_NAME}_PACKAGE_NAME}_${_component}_FOUND)
+        set_property(GLOBAL APPEND PROPERTY PACKAGES_FOUND ${${PROJECT_NAME}_PACKAGE_NAME}_${_component})
+
+        cmcs_set_global_property(PROPERTY ${PROJECT_NAME}_${_component}_LOCKED)
+    endforeach()
+
     # In Project find_package calls never work in build and require ALIAS targets
     # This export dues export the targets into the build dir with absoulte paths.
     # It only works if the <packagename>Config.cmake has all requirements to run 
